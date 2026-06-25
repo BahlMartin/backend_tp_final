@@ -1,0 +1,221 @@
+{
+  "info": {
+    "_postman_id": "63c818f0-d814-4ceb-be6d-4814d1914d24",
+    "name": "backend_slack",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46397297"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "check-email",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/check-email?email=abc@gmail.com",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "check-email"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "abc@gmail.com"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"password\": \"M123456m\",\r\n    \"first_name\":\"juan\",\r\n    \"last_name\":\"gomez\",\r\n    \"user_name\":\"juansito\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/register",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-email",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmEzZDllMzlhNWVmYjdkMDYxZDM3NjIyIiwiaWF0IjoxNzgyNDIzMDk4LCJleHAiOjE3ODI0MjM5OTh9.YkByb6RwFVT06U4GPANWzQuBRhLTzkBs4mmWxBW_nK8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/verify-email",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"password\": \"M123456m\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/login",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-2fa",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"code\": 421348\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/verify-2fa",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-2fa"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/forgot-password",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNmEzZDllMzlhNWVmYjdkMDYxZDM3NjIyIiwiaWF0IjoxNzgyNDI0NjY2LCJleHAiOjE3ODI0MjQ5NjZ9.fJfgK-9W8VKqwuKKm5MCl5W7Tgf9Vb9hmX3S4btxZi4\",\r\n    \"password\": \"A123456a\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/reset-password",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
