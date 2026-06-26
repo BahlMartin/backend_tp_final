@@ -30,7 +30,7 @@ class AuthService {
      */
     async checkEmail(email) {
         const user = await userRepository.getByEmail(email);
-        if (!user){
+        if (!user) {
             throw new ServerError('El email no se encuentra registrado', 404);
         }
         return {
@@ -44,9 +44,7 @@ class AuthService {
      * 
      */
     async registerUser(userData) {
-        const { email, password, first_name, last_name, user_name } = userData;
-
-        const existing_user = await userRepository.getByEmail(email);
+        const { email, password, first_name, last_name, user_name } = userData; const existing_user = await userRepository.getByEmail(email);
         if (existing_user) {
             throw new ServerError('El email ya se encuentra registrado', 409);
         }
@@ -77,7 +75,7 @@ class AuthService {
             new Date(Date.now() + 15 * 60 * 1000)
         );
 
-        
+
         try {
             await mailService.sendVerificationEmail(user.email, verification_token);
         } catch (error) {
@@ -150,7 +148,7 @@ class AuthService {
             new Date(Date.now() + 15 * 60 * 1000)
         );
 
-        
+
         try {
             await mailService.send2FAEmail(user.email, code2FA);
         } catch (error) {
@@ -193,7 +191,7 @@ class AuthService {
             throw new ServerError('Token 2FA inválido o expirado', 401);
         }
         const code_token = parseInt(decoded_token.code)
-        
+
         // Verificar que el código coincida
         if (code_token !== code) {
             throw new ServerError('Código 2FA incorrecto', 401);
@@ -264,7 +262,7 @@ class AuthService {
     async resetPassword(token, newPassword) {
         // Verificar y decodificar token JWT
         const decoded = jwt.verify(token, ENVIRONMENT.JWT_SECRET);
-        const user_id = decoded.userId;
+        const user_id = decoded.user_id;
 
         // Hash de la nueva contraseña
         const hashed_password = await bcrypt.hash(newPassword, 12);

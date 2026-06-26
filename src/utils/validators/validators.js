@@ -78,6 +78,16 @@ export const validators = {
         if (!isValid) {
             throw new ServerError('El código 2FA debe ser de 6 dígitos', 400);
         }
+    },
+
+    token: (token) => {
+        if (!token || typeof token !== 'string' || token.trim().length === 0) {
+            throw new ServerError('El token es requerido y debe ser válido', 400);
+        }
+        const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+        if (!jwtRegex.test(token)) {
+            throw new ServerError('El formato del token no es válido', 400);
+        }
     }
 };
 

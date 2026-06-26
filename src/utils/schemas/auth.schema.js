@@ -53,11 +53,7 @@ export const loginSchema = {
 export const verifyEmailSchema = {
     token: {
         required: true,
-        validate: (value) => {
-            if (!value || value.length === 0) {
-                throw new Error('El token es requerido');
-            }
-        }
+        validate: validators.token
     }
 };
 
@@ -81,16 +77,16 @@ export const forgotPasswordSchema = {
     }
 };
 
-// Schema para reset de contraseña
-export const resetPasswordSchema = {
+// Schema para reset de contraseña (query params)
+export const resetPasswordQuerySchema = {
     token: {
         required: true,
-        validate: (value) => {
-            if (!value || value.length === 0) {
-                throw new Error('El token es requerido');
-            }
-        }
-    },
+        validate: validators.token
+    }
+};
+
+// Schema para reset de contraseña (body)
+export const resetPasswordBodySchema = {
     password: {
         required: true,
         validate: validators.password
@@ -104,5 +100,6 @@ export default {
     verifyEmailSchema,
     verify2FASchema,
     forgotPasswordSchema,
-    resetPasswordSchema
+    resetPasswordQuerySchema,
+    resetPasswordBodySchema
 };

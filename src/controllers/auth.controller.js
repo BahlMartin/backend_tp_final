@@ -32,7 +32,7 @@ const authController = {
 
     async verifyEmail(req, res, next) {
         try {
-            const { token } = req.body;
+            const { token } = req.query;
             const result = await authService.verifyEmail(token);
 
             return res.status(200).json({
@@ -92,7 +92,8 @@ const authController = {
 
     async resetPassword(req, res, next) {
         try {
-            const { token, password } = req.body;
+            const { token } = req.query;
+            const { password } = req.body;
             const result = await authService.resetPassword(token, password);
 
             return res.status(200).json({
