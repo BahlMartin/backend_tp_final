@@ -3,23 +3,40 @@ import ChannelMessage from "../models/channelMessage.model.js";
 
 class ChannelMessageRepository {
 
-    async create(workspace_channel_id, workspace_member_id, message, modifcation_date) {
+    async create(workspace_channel_id, channel_member_id, content, modification_date) {
         return await ChannelMessage.create({
             fk_workspace_channel_id: workspace_channel_id,
-            fk_workspace_member_id: workspace_member_id,
-            message,
-            modifcation_date
+            fk_channel_member_id: channel_member_id,
+            content,
+            modification_date
+        });
+    }
+
+    async findById(message_id) {
+        return await ChannelMessage.findById(message_id).populate({
+            path: 'fk_channel_member_id',
+            populate: {
+                path: 'fk_workspace_member_id',
+                select: 'rol fk_user_id',
+                populate: {
+                    path: 'fk_user_id',
+                    select: 'user_name email'
+                }
+            }
         });
     }
 
     async getByChannelId(workspace_channel_id) {
         return await ChannelMessage.find({ fk_workspace_channel_id: workspace_channel_id })
             .populate({
-                path: 'fk_workspace_member_id',
-                select: 'rol fk_user_id',
+                path: 'fk_channel_member_id',
                 populate: {
-                    path: 'fk_user_id',
-                    select: 'user_name email'
+                    path: 'fk_workspace_member_id',
+                    select: 'rol fk_user_id',
+                    populate: {
+                        path: 'fk_user_id',
+                        select: 'user_name email'
+                    }
                 }
             })
             .sort({ creation_date: -1 });
@@ -30,11 +47,14 @@ class ChannelMessageRepository {
 
         const messages = await ChannelMessage.find({ fk_workspace_channel_id: workspace_channel_id })
             .populate({
-                path: 'fk_workspace_member_id',
-                select: 'rol fk_user_id',
+                path: 'fk_channel_member_id',
                 populate: {
-                    path: 'fk_user_id',
-                    select: 'user_name email'
+                    path: 'fk_workspace_member_id',
+                    select: 'rol fk_user_id',
+                    populate: {
+                        path: 'fk_user_id',
+                        select: 'user_name email'
+                    }
                 }
             })
             .sort({ creation_date: -1 })
@@ -47,8 +67,8 @@ class ChannelMessageRepository {
             messages: messages.map((message) => ({
                 message_id: message._id,
                 channel_id: message.fk_workspace_channel_id,
-                member_name: message.fk_workspace_member_id?.fk_user_id?.user_name,
-                content: message.message,
+                member_name: message.fk_channel_member_id?.fk_workspace_member_id?.fk_user_id?.user_name,
+                content: message.content,
                 updated_at: message.modification_date
             })),
             pagination: {

@@ -2,70 +2,78 @@ import ServerError from '../utils/helpers/serverError.helpers.js';
 import workspaceChannelRepository from '../repositories/workspaceChannel.repository.js';
 import channelMemberRepository from '../repositories/channelMember.repository.js';
 import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
+import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
 
-async function channelMembershipMiddleware(options = {}) {
+/**
+ * Middleware para validar membresías y roles en canales y workspaces.
+ * @param {Object} options Opciones de validación
+ * @param {boolean} options.require_workspace_member Requiere que el usuario sea miembro del workspace
+ * @param {boolean} options.require_channel_member Requiere que el usuario sea miembro del canal
+ * @param {boolean} options.allow_owner_bypass Permite a los OWNER saltarse la regla de pertenencia al canal
+ * @param {string[]} options.required_roles Array de roles permitidos en el workspace
+ */
+function channelMembershipMiddleware(options = {}) {
     const {
-        requireWorkspaceMember = false,
-        requireChannelMember = false,
-        requiredRoles = []
+        require_workspace_member = false,
+        require_channel_member = false,
+        allow_owner_bypass = false,
+        required_roles = []
     } = options;
 
     return async (req, res, next) => {
         try {
             const { channel_id } = req.params;
-            const userId = req.user?.userId;
+            const user_id = req.user.user_id;
 
-            if (!userId) {
+            if (!user_id) {
                 throw new ServerError('Usuario no autenticado', 401);
             }
 
-            // Cargar el canal
-            const channels = await workspaceChannelRepository.getByWorkspaceId(null);
-            const channel = channels?.find(c => c._id.toString() === channel_id);
-
+            // 1. Cargar el canal 
+            const channel = await workspaceChannelRepository.getByChannelId(channel_id);
             if (!channel) {
                 throw new ServerError('Canal no encontrado', 404);
             }
 
-            const workspaceId = channel.fk_workspace_id;
 
-            // Verificar pertenencia al workspace si se requiere
-            if (requireWorkspaceMember || requireChannelMember || requiredRoles.length > 0) {
-                const workspaceMembership = await workspaceMemberRepository.getByUserAndWorkspaceId(workspaceId, userId);
+            const workspace_id = channel.fk_workspace_id;
 
-                if (!workspaceMembership || !workspaceMembership.active) {
-                    throw new ServerError(
-                        'No tienes permiso para acceder a este canal',
-                        403
-                    );
+            // 2. Validar permisos en Workspace (si aplica)
+            const needs_workspace_validation = require_workspace_member || require_channel_member || required_roles.length > 0;
+            let workspace_membership = null;
+
+            if (needs_workspace_validation) {
+                workspace_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, workspace_id);
+
+                if (!workspace_membership || !workspace_membership.active) {
+                    throw new ServerError('No tienes permiso para acceder a este workspace', 403);
                 }
 
-                // Verificar roles en workspace si se requiere
-                if (requiredRoles.length > 0 && !requiredRoles.includes(workspaceMembership.rol)) {
-                    throw new ServerError(
-                        'No tienes el rol necesario para realizar esta acción',
-                        403
-                    );
+                if (required_roles.length > 0 && !required_roles.includes(workspace_membership.rol)) {
+                    throw new ServerError('No tienes el rol necesario para realizar esta acción', 403);
                 }
 
-                req.workspaceMembership = workspaceMembership;
+                req.workspace_membership = workspace_membership;
             }
 
-            // Verificar pertenencia al canal si se requiere
-            if (requireChannelMember) {
-                const members = await channelMemberRepository.getMembersByChannelId(channel_id);
-                const isMember = members?.some(m => m.member_email === workspaceMembership?.fk_user_id?.email);
+            // 3. Validar permisos en el Canal (si aplica)
+            if (require_channel_member) {
+                const is_owner = workspace_membership && workspace_membership.rol === MEMBER_WORKSPACE_ROLES.OWNER;
+                const should_bypass = allow_owner_bypass && is_owner;
 
-                if (!isMember) {
-                    throw new ServerError(
-                        'No eres miembro de este canal',
-                        403
-                    );
+                if (!should_bypass) {
+                    const members = await channelMemberRepository.getMembersByChannelId(channel_id);
+                    const matched_member = members.find(member => member.workspace_member_id && member.workspace_member_id.toString() === workspace_membership._id.toString());
+
+                    if (!matched_member) {
+                        throw new ServerError('No eres miembro de este canal', 403);
+                    }
+
+                    req.channel_membership = matched_member;
                 }
             }
 
-            // Adjuntar canal al request
-            req.channel = channel;
+            req.channel = channel
 
             next();
         } catch (error) {

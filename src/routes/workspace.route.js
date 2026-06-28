@@ -2,6 +2,7 @@ import express from 'express';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import validateObjectIdMiddleware from '../middlewares/validateObjectId.middleware.js';
 import workspaceMemberMiddleware from '../middlewares/workspaceMember.middleware.js';
+import channelMembershipMiddleware from '../middlewares/channelMembership.middleware.js';
 import validateBodyMiddleware from '../middlewares/validateBody.middleware.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
 import workspaceController from '../controllers/workspace.controller.js';
@@ -95,12 +96,23 @@ workspace_router.get(
     channelController.getChannels
 );
 
+workspace_router.put(
+    '/:workspace_id/channels/:channel_id',
+    validateObjectIdMiddleware('workspace_id'),
+    validateObjectIdMiddleware('channel_id'),
+    workspaceMemberMiddleware([MEMBER_WORKSPACE_ROLES.OWNER, MEMBER_WORKSPACE_ROLES.ADMIN]),
+    channelMembershipMiddleware({ require_channel_member: true, allow_owner_bypass: true }),
+    validateBodyMiddleware(channelSchema),
+    channelController.updateChannel
+);
+
 workspace_router.delete(
     '/:workspace_id/channels/:channel_id',
     validateObjectIdMiddleware('workspace_id'),
     validateObjectIdMiddleware('channel_id'),
     workspaceMemberMiddleware([MEMBER_WORKSPACE_ROLES.OWNER, MEMBER_WORKSPACE_ROLES.ADMIN]),
+    channelMembershipMiddleware({ require_channel_member: true, allow_owner_bypass: true }),
     channelController.deleteChannel
 );
 
-export default workspace_router;
+export default workspace_router;

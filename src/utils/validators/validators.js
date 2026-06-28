@@ -1,5 +1,5 @@
 import ServerError from '../helpers/serverError.helpers.js';
-
+import mongoose from 'mongoose';
 // Validadores reutilizables - contienen únicamente lógica de validación de formato
 export const validators = {
     email: (email) => {
@@ -107,6 +107,22 @@ export const validators = {
         const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
         if (!jwtRegex.test(token)) {
             throw new ServerError('El formato del token no es válido', 400);
+        }
+    },
+
+    messageContent: (content) => {
+        const isValid = content && content.trim().length > 0;
+        if (!isValid) {
+            throw new ServerError(
+                'El contenido del mensaje no puede estar vacío',
+                400
+            );
+        }
+    },
+
+    objectId: (id) => {
+        if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+            throw new ServerError(`ID inválido: ${id}`, 400);
         }
     }
 };

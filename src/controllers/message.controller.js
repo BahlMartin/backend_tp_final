@@ -19,8 +19,8 @@ const messageController = {
     async createMessage(req, res, next) {
         try {
             const { channel_id } = req.params;
-            const userId = req.user.userId;
-            const result = await messageService.createMessage(userId, channel_id, req.body);
+            const channel_member_id = req.channel_membership.channel_member_id;
+            const result = await messageService.createMessage(channel_member_id, channel_id, req.body);
 
             return res.status(201).json({
                 ok: true,
@@ -35,8 +35,8 @@ const messageController = {
     async updateMessage(req, res, next) {
         try {
             const { message_id } = req.params;
-            const userId = req.user.userId;
-            const result = await messageService.updateMessage(userId, message_id, req.body);
+            const modification_date = req.message.modification_date;
+            const result = await messageService.updateMessage(message_id, modification_date, req.body);
 
             return res.status(200).json({
                 ok: true,
@@ -51,8 +51,8 @@ const messageController = {
     async deleteMessage(req, res, next) {
         try {
             const { message_id } = req.params;
-            const userId = req.user.userId;
-            await messageService.deleteMessage(userId, message_id);
+            const modification_date = req.message.modification_date;
+            await messageService.deleteMessage(message_id, modification_date);
 
             return res.status(200).json({
                 ok: true,

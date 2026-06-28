@@ -25,10 +25,18 @@ class ChannelMemberRepository {
 
         return result.map((member) => ({
             channel_member_id: member._id,
-            workspace_member_id: member.fk_workspace_member_id?._id,
-            member_email: member.fk_workspace_member_id?.fk_user_id?.email,
-            member_name: member.fk_workspace_member_id?.fk_user_id?.user_name,
+            workspace_member_id: member.fk_workspace_member_id._id,
+            member_email: member.fk_workspace_member_id.fk_user_id?.email,
+            member_name: member.fk_workspace_member_id.fk_user_id?.user_name,
         }));
+    }
+
+    async getByChannelAndWorkspaceMemberId(channel_id, workspace_member_id) {
+        return await ChannelMember.findOne({ fk_workspace_channel_id: channel_id, fk_workspace_member_id: workspace_member_id });
+    }
+
+    async getByChannelAndChannelMemberId(channel_id, channel_member_id) {
+        return await ChannelMember.findOne({ fk_workspace_channel_id: channel_id, _id: channel_member_id });
     }
 }
 

@@ -7,11 +7,11 @@ function validateBodyMiddleware(schema) {
         try {
             if (Object.keys(schema).length === 0) {
                 throw new ServerError(
-                'El body de la solicitud no contiene campos para validar',
-                400
-            );
+                    'El body de la solicitud no contiene campos para validar',
+                    400
+                );
             }
-            
+
 
             for (const [field, validator] of Object.entries(schema)) {
                 const value = req.body[field];

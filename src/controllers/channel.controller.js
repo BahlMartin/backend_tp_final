@@ -34,8 +34,12 @@ const channelController = {
 
     async getChannelById(req, res, next) {
         try {
-            const { channel_id } = req.params;
-            const result = await channelService.getChannelById(channel_id);
+            const channel = req.channel;
+            const result = {
+                _id: channel._id,
+                name: channel.name,
+                description: channel.description
+            }
 
             return res.status(200).json({
                 ok: true,
@@ -57,6 +61,22 @@ const channelController = {
                 ok: true,
                 message: 'Canal eliminado',
                 data: null
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    async updateChannel(req, res, next) {
+        try {
+            const { workspace_id, channel_id } = req.params;
+            const user_id = req.user.user_id;
+            const result = await channelService.updateChannel(user_id, workspace_id, channel_id, req.body);
+
+            return res.status(200).json({
+                ok: true,
+                message: 'Canal actualizado',
+                data: result
             });
         } catch (error) {
             next(error);

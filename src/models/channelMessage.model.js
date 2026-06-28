@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { WORKSPACE_CHANNEL_COLLECTION_NAME } from "./workspaceChannel.model.js";
-import { WORKSPACE_MEMBER_COLLECTION_NAME } from "./workspaceMembers.model.js";
+import { CHANNEL_MEMBER_COLLECTION_NAME } from "./channelMember.model.js";
 
 const channelMessageSchema = new mongoose.Schema({
     fk_workspace_channel_id: {
@@ -8,12 +8,12 @@ const channelMessageSchema = new mongoose.Schema({
         ref: WORKSPACE_CHANNEL_COLLECTION_NAME,
         required: true
     },
-    fk_workspace_member_id: {
+    fk_channel_member_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: WORKSPACE_MEMBER_COLLECTION_NAME,
+        ref: CHANNEL_MEMBER_COLLECTION_NAME,
         required: true
     },
-    message: {
+    content: {
         type: String,
         required: true
     },

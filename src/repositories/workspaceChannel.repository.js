@@ -18,6 +18,10 @@ class WorkspaceChannelRepository {
         });
     }
 
+    async getByChannelId(channelId) {
+        return await WorkspaceChannel.findById(channelId);
+    }
+
     async getByWorkspaceId(workspaceId) {
         return await WorkspaceChannel.find({
             fk_workspace_id: workspaceId
@@ -29,6 +33,13 @@ class WorkspaceChannelRepository {
             fk_workspace_id: workspaceId,
             _id: channelId
         });
+    }
+
+    async updateById(workspaceId, channelId, data) {
+        return await WorkspaceChannel.findOneAndUpdate({
+            fk_workspace_id: workspaceId,
+            _id: channelId
+        }, data, { new: true });
     }
 
 

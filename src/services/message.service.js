@@ -2,66 +2,75 @@ import ServerError from '../utils/helpers/serverError.helpers.js';
 import channelMessageRepository from '../repositories/channelMessage.repository.js';
 
 class MessageService {
-    async getMessagesByChannel(channelId) {
-        const messages = await channelMessageRepository.getByChannelId(channelId);
+    async getMessagesByChannel(channel_id) {
+        const messages = await channelMessageRepository.getByChannelId(channel_id);
 
-        return messages.map(msg => ({
-            _id: msg.message_id,
-            content: msg.content,
-            fk_user_id: msg.member_name,
-            updated_at: msg.updated_at
+        return messages.map(message => ({
+            message_id: message._id,
+            message: message.message,
+            fk_user_id: message.member_name,
+            modification_date: message.modification_date
         }));
     }
 
-    async createMessage(userId, channelId, messageData) {
-        const { content } = messageData;
+    async createMessage(channel_member_id, channel_id, message_data) {
+        const { content } = message_data;
 
         if (!content || content.trim().length === 0) {
             throw new ServerError('El contenido del mensaje no puede estar vacío', 400);
         }
 
-        // El canal y la pertenencia ya fueron validados por el middleware
+        const modification_date = new Date(Date.now() + 15 * 60 * 1000);
+
         // Crear mensaje
         const message = await channelMessageRepository.create(
-            channelId,
-            userId,
+            channel_id,
+            channel_member_id,
             content.trim(),
-            new Date()
+            modification_date
         );
 
         return {
             _id: message._id,
             content: message.content,
-            fk_user_id: userId
+            fk_channel_member_id: channel_member_id
         };
     }
 
-    async updateMessage(userId, messageId, messageData) {
-        const { content } = messageData;
+    async updateMessage(message_id, modification_date, message_data) {
+        const { content } = message_data;
 
         if (!content || content.trim().length === 0) {
             throw new ServerError('El contenido del mensaje no puede estar vacío', 400);
         }
 
-        // El mensaje ya fue cargado por el middleware (attachMessageMiddleware)
-        // Verificamos la ventana de 15 minutos en el middleware o aquí
+        const now = new Date();
+        const limit_date = new Date(modification_date);
+
+        if (isNaN(limit_date.getTime()) || now > limit_date) {
+            throw new ServerError('El tiempo límite para modificar el mensaje ha expirado', 400);
+        }
 
         // Actualizar mensaje
-        const updatedMessage = await channelMessageRepository.updateById(messageId, {
-            message: content.trim(),
-            modification_date: new Date()
+        const updated_message = await channelMessageRepository.updateById(message_id, {
+            content: content.trim()
         });
 
         return {
-            _id: updatedMessage._id,
-            content: updatedMessage.message
+            _id: updated_message._id,
+            content: updated_message.content
         };
     }
 
-    async deleteMessage(userId, messageId) {
-        // El mensaje ya fue cargado por el middleware
-        // Eliminar mensaje
-        await channelMessageRepository.hardDeleteById(messageId);
+    async deleteMessage(message_id, modification_date) {
+        const now = new Date();
+        const limit_date = new Date(modification_date);
+
+        if (isNaN(limit_date.getTime()) || now > limit_date) {
+            throw new ServerError('El tiempo límite para eliminar el mensaje ha expirado', 400);
+        }
+
+        await channelMessageRepository.hardDeleteById(message_id);
     }
 }
 

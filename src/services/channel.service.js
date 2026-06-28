@@ -3,7 +3,7 @@ import workspaceChannelRepository from '../repositories/workspaceChannel.reposit
 import channelMemberRepository from '../repositories/channelMember.repository.js';
 import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
-
+import ChannelMemberService from "./channelMember.service.js"
 /**
  * ChannelService
  * 
@@ -28,6 +28,20 @@ class ChannelService {
             description || null
         );
 
+        // Agregar al creador como miembro del canal
+        const creatorMembership = await workspaceMemberRepository.getByUserAndWorkspaceId(userId, workspaceId);
+        if (creatorMembership) {
+            await channelMemberRepository.create(channel._id, creatorMembership._id);
+        }
+
+        // Agregar al dueño del workspace como miembro del canal
+        const allMembers = await workspaceMemberRepository.getMembersByWorkspaceId(workspaceId);
+        const ownerMember = allMembers.find(member => member.member_rol === MEMBER_WORKSPACE_ROLES.OWNER);
+
+        if (ownerMember && (!creatorMembership || ownerMember.member_id.toString() !== creatorMembership._id.toString())) {
+            await channelMemberRepository.create(channel._id, ownerMember.member_id);
+        }
+
         return {
             _id: channel._id
         };
@@ -49,11 +63,12 @@ class ChannelService {
     /**
      * Obtiene información de un canal específico
      */
-    async getChannelById(channelId) {
-        // El middleware channelMembershipMiddleware ya adjunta el canal
-        return {
-            message: 'Canal obtenido del middleware'
-        };
+    async getChannelById(channel_id) {
+        const channel = await workspaceChannelRepository.getByChannelId(channel_id);
+        if (!channel) {
+            throw new ServerError('Canal no encontrado', 404);
+        }
+        return channel;
     }
 
     /**
@@ -74,6 +89,31 @@ class ChannelService {
 
         // Eliminar canal (hard delete)
         await workspaceChannelRepository.hardDeleteById(workspace_id, channel_id);
+    }
+    async updateChannel(user_id, workspace_id, channel_id, channelData) {
+        // Obtener el canal
+        const channels = await workspaceChannelRepository.getByWorkspaceId(workspace_id);
+        const channel = channels.find(channel => channel._id.toString() === channel_id);
+
+        if (!channel) {
+            throw new ServerError('Canal no encontrado', 404);
+        }
+
+        if (channel.fk_workspace_id.toString() !== workspace_id) {
+            throw new ServerError('El canal no pertenece al workspace', 403);
+        }
+
+        const { name, description } = channelData;
+        const updatedChannel = await workspaceChannelRepository.updateById(workspace_id, channel_id, {
+            name: name || channel.name,
+            description: description !== undefined ? description : channel.description
+        });
+
+        return {
+            _id: updatedChannel._id,
+            name: updatedChannel.name,
+            description: updatedChannel.description
+        };
     }
 }
 

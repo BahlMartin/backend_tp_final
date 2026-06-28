@@ -69,6 +69,10 @@ class WorkspaceMemberRepository {
         return await WorkspaceMember.findByIdAndDelete(member_id)
     }
 
+    async getByMemberId(member_id) {
+        return await WorkspaceMember.findById(member_id)
+    }
+
 }
 
 export const workspacememberRepository = new WorkspaceMemberRepository();
