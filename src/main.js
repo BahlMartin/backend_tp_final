@@ -25,11 +25,14 @@ app.use(express.json())
 // habilitamos las consulta cross origin desde el frontend 
 app.use(cors())
 
+if (ENVIROMENT.MODE === 'development') {
+    app.listen(PORT, () => {
+        console.log("nuestra aplicacion express se esta ejecutando en el puerto " + PORT)
+    })
+}
+
 // Registrar rutas
 app.use('/api/auth', auth_router);
-app.listen(PORT, () => {
-    console.log("nuestra aplicacion express se esta ejecutando en el puerto " + PORT)
-})
 app.use('/api/users', user_router);
 app.use('/api/workspaces', workspace_router);
 app.use('/api/invitations', invitation_router);
