@@ -13,7 +13,6 @@ const invitationController = {
 
             return res.status(201).json({
                 ok: true,
-                message: 'Invitación enviada',
                 data: result
             });
         } catch (error) {
@@ -23,13 +22,12 @@ const invitationController = {
 
     async respondInvitation(req, res, next) {
         try {
-            const { invitation_id } = req.params;
-            const userId = req.user.userId;
-            const { decision } = req.body;
+            const { invitation_id, decision } = req.params;
+            const user_id = req.user.user_id;
 
             const result = await invitationService.respondInvitation(
                 invitation_id,
-                userId,
+                user_id,
                 decision
             );
 

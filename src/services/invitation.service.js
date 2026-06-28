@@ -87,20 +87,22 @@ class InvitationService {
     }
 
     async respondInvitation(invitationId, user_id, decision) {
-        if (!['accept', 'reject'].includes(decision)) {
-            throw new ServerError('Decisión inválida. Use "accept" o "reject"', 400);
-        }
 
-        const invitation = await invitationWorkspaceRepository.getInvitationById(invitationId);
+
+        const invitation = await invitationWorkspaceRepository.getInvitationByInvitedAndWorkspace(user_id, invitationId);
 
         if (!invitation) {
-            throw new ServerError('Invitación no encontrada', 404);
+            throw new ServerError('No tenes invitaciones de este espacio de trabajo', 404);
+        }
+        // el usuario no tiene que aceptar su propia invitacion
+        if (invitation.fk_inviter_id.toString() === user_id) {
+            throw new ServerError('No puedes aceptar tu propia invitación', 400);
         }
 
         if (decision === 'accept') {
             // Cambiar estado a accepted y crear membership
             await invitationWorkspaceRepository.updateInvitation(invitationId, {
-                state: INVITATION_STATES.ACCEPTED
+                status: INVITATION_STATES.ACCEPTED
             });
 
             // Crear membership como MEMBER

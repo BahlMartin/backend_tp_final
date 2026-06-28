@@ -1,6 +1,7 @@
 import ENVIROMENT from "../config/enviroment.config.js";
 import mailer_transport from "../config/mailer.config.js";
 import ServerError from "../utils/helpers/serverError.helpers.js";
+import INVITATION_STATES from "../utils/constants/invitationWorkspaceStates.constants.js";
 
 class MailService {
 
@@ -435,10 +436,10 @@ class MailService {
         }
     }
 
-    async sendInvitationEmail(userEmail, invitationId, inviterName = 'Un usuario', workspaceName = 'un espacio de trabajo') {
+    async sendInvitationEmail(userEmail, invitationId, inviterName, workspaceName) {
         try {
-            const accept_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/accept`;
-            const reject_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/reject`;
+            const accept_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/${INVITATION_STATES.ACCEPTED}`;
+            const reject_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/${INVITATION_STATES.REJECTED}`;
 
             await mailer_transport.sendMail({
                 from: `"UTN Backend" <${ENVIROMENT.GMAIL_USERNAME}>`,

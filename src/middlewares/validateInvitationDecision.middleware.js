@@ -4,15 +4,18 @@ import INVITATION_STATES from '../utils/constants/invitationWorkspaceStates.cons
 
 async function validateInvitationDecisionMiddleware(req, res, next) {
     try {
-        const { invitation_id } = req.params;
+        const { invitation_id, decision } = req.params;
 
-        const invitation = await invitationWorkspaceRepository.findById(invitation_id);
+        if (decision !== INVITATION_STATES.ACCEPTED && decision !== INVITATION_STATES.REJECTED) {
+            throw new ServerError('Decisión inválida. Debe ser accepted o rejected', 400);
+        }
 
+        const invitation = await invitationWorkspaceRepository.getInvitationById(invitation_id);
         if (!invitation) {
             throw new ServerError('Invitación no encontrada', 404);
         }
 
-        if (invitation.state !== INVITATION_STATES.PENDING) {
+        if (invitation.status !== INVITATION_STATES.PENDING) {
             throw new ServerError(
                 'La invitación ya ha sido respondida',
                 409
