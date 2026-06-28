@@ -73,6 +73,26 @@ export const validators = {
         }
     },
 
+    workspaceDescription: (description) => {
+        const isValid = description && description.length >= 3;
+        if (!isValid) {
+            throw new ServerError(
+                'La descripción del workspace debe tener mínimo 3 caracteres',
+                400
+            );
+        }
+    },
+
+    channelDescription: (description) => {
+        const isValid = description && description.length >= 3;
+        if (!isValid) {
+            throw new ServerError(
+                'La descripción del canal debe tener mínimo 3 caracteres',
+                400
+            );
+        }
+    },
+
     code2FA: (code) => {
         const isValid = /^[0-9]{6}$/.test(String(code));
         if (!isValid) {

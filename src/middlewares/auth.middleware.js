@@ -12,7 +12,7 @@ async function authMiddleware(req, res, next) {
 
         const decoded = jwt.verify(token, ENVIRONMENT.JWT_SECRET);
         req.user = {
-            userId: decoded.id,
+            user_id: decoded.user_id,
             email: decoded.email
         };
 

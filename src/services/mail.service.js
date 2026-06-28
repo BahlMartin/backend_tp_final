@@ -435,6 +435,178 @@ class MailService {
         }
     }
 
+    async sendInvitationEmail(userEmail, invitationId, inviterName = 'Un usuario', workspaceName = 'un espacio de trabajo') {
+        try {
+            const accept_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/accept`;
+            const reject_url = `${ENVIROMENT.URL_FRONTEND}/invitations/${invitationId}/reject`;
+
+            await mailer_transport.sendMail({
+                from: `"UTN Backend" <${ENVIROMENT.GMAIL_USERNAME}>`,
+                to: userEmail,
+                subject: `${inviterName} te invitó a unirte a ${workspaceName} - UTN Backend`,
+                html: `
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Invitación a Espacio de Trabajo</title>
+                        <style>
+                            body {
+                                font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+                                background-color: #f4ede8;
+                                margin: 0;
+                                padding: 0;
+                                color: #1d1c1d;
+                            }
+                            .wrapper {
+                                background-color: #f4ede8;
+                                padding: 40px 20px;
+                            }
+                            .container {
+                                max-width: 560px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                            }
+                            .header {
+                                background-color: #4a154b;
+                                padding: 32px 30px 28px;
+                                text-align: center;
+                            }
+                            .header-logo {
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: #ffffff;
+                                letter-spacing: 2px;
+                                text-transform: uppercase;
+                                opacity: 0.7;
+                                margin-bottom: 14px;
+                            }
+                            .header h1 {
+                                margin: 0;
+                                font-size: 26px;
+                                font-weight: 900;
+                                color: #ffffff;
+                                line-height: 1.3;
+                            }
+                            .content {
+                                padding: 36px 40px 28px;
+                                line-height: 1.65;
+                                color: #1d1c1d;
+                            }
+                            .content p {
+                                margin: 0 0 14px;
+                                font-size: 16px;
+                            }
+                            .section-label {
+                                font-size: 12px;
+                                color: #868686;
+                                text-transform: uppercase;
+                                letter-spacing: 0.08em;
+                                font-weight: 700;
+                                margin: 0 0 6px;
+                            }
+                            .button {
+                                display: inline-block;
+                                padding: 14px 32px;
+                                text-decoration: none;
+                                border-radius: 4px;
+                                font-weight: 700;
+                                margin: 8px 6px;
+                                font-size: 15px;
+                            }
+                            .button-accept {
+                                background-color: #007a5a;
+                                color: #ffffff;
+                            }
+                            .button-reject {
+                                background-color: #ffffff;
+                                color: #616061;
+                                border: 1px solid #dddddd;
+                            }
+                            .footer {
+                                background-color: #f4ede8;
+                                padding: 22px 40px;
+                                text-align: center;
+                                font-size: 12px;
+                                color: #868686;
+                                border-top: 1px solid #ece8df;
+                            }
+                            .footer p { margin: 4px 0; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="wrapper">
+                            <div class="container">
+
+                                <div class="header">
+                                    <div class="header-logo">UTN Backend</div>
+                                    <h1>🎉 Tienes una nueva invitación</h1>
+                                </div>
+
+                                <div class="content">
+                                    <p>¡Hola! Recibiste una invitación para unirte a un espacio de trabajo en <strong>UTN Backend</strong>.</p>
+
+                                    <!-- Quién invita -->
+                                    <p class="section-label">Fuiste invitado por</p>
+                                    <table cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse; background-color:#f8f5ff; border:1px solid #e8dff5; border-left:4px solid #4a154b; border-radius:6px; margin-bottom:24px;">
+                                        <tr>
+                                            <td style="padding:16px 20px;">
+                                                <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                                    <tr>
+                                                        <td style="vertical-align:middle; padding-right:14px;">
+                                                            <div style="width:42px; height:42px; background-color:#4a154b; border-radius:6px; text-align:center; line-height:42px; font-size:18px; font-weight:700; color:#ffffff;">👤</div>
+                                                        </td>
+                                                        <td style="vertical-align:middle;">
+                                                            <strong style="display:block; font-size:16px; color:#1d1c1d; font-weight:800;">${inviterName}</strong>
+                                                            <span style="font-size:13px; color:#616061;">te ha enviado una invitación</span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Workspace destino -->
+                                    <p class="section-label">Para unirte al espacio de trabajo</p>
+                                    <div style="background-color:#f8f5ff; border:1px solid #e8dff5; border-radius:8px; padding:22px 24px; margin-bottom:28px; text-align:center;">
+                                        <div style="font-size:34px; margin-bottom:10px;">🏢</div>
+                                        <div style="font-size:22px; font-weight:900; color:#4a154b;">${workspaceName}</div>
+                                    </div>
+
+                                    <!-- Botones -->
+                                    <div style="text-align:center; margin-bottom:20px;">
+                                        <a href="${accept_url}" class="button button-accept">✅ Unirme al workspace</a>
+                                        <a href="${reject_url}" class="button button-reject">No, gracias</a>
+                                    </div>
+
+                                    <p style="font-size:13px; color:#868686; text-align:center; margin:0;">⏳ Esta invitación expira en <strong>7 días</strong>.</p>
+
+                                    <hr style="border:none; border-top:1px solid #eeeeee; margin:24px 0;">
+                                    <p style="font-size:13px; color:#868686; margin:0;">Si no esperabas esta invitación o no reconocés a <strong>${inviterName}</strong>, podés ignorar este email con total seguridad.</p>
+                                </div>
+
+                                <div class="footer">
+                                    <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                                    <p style="margin-top:6px;">Este email fue enviado a ${userEmail}</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `
+            });
+            return { status: 200, message: "Email de invitación enviado" };
+        } catch (error) {
+            console.error('Error al enviar email de invitación:', error);
+            throw new ServerError("Error al enviar email de invitación al workspace", 500);
+        }
+    }
+
 }
 
 const mailService = new MailService()

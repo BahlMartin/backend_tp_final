@@ -21,17 +21,6 @@ class ChannelService {
      */
     async createChannel(userId, workspaceId, channelData) {
         const { name, description } = channelData;
-
-        // Verificación de negocio: usuario es miembro del workspace
-        const membership = await workspaceMemberRepository.getByUserAndWorkspaceId(
-            userId,
-            workspaceId
-        );
-
-        if (!membership) {
-            throw new ServerError('No eres miembro de este workspace', 403);
-        }
-
         // Crear canal
         const channel = await workspaceChannelRepository.create(
             workspaceId,
@@ -40,10 +29,7 @@ class ChannelService {
         );
 
         return {
-            _id: channel._id,
-            name: channel.name,
-            description: channel.description,
-            creation_date: channel.creation_date
+            _id: channel._id
         };
     }
 
@@ -56,8 +42,7 @@ class ChannelService {
         return channels.map(channel => ({
             _id: channel._id,
             name: channel.name,
-            description: channel.description,
-            creation_date: channel.creation_date
+            description: channel.description
         }));
     }
 
@@ -74,17 +59,21 @@ class ChannelService {
     /**
      * Elimina un canal
      */
-    async deleteChannel(userId, workspaceId, channelId) {
+    async deleteChannel(user_id, workspace_id, channel_id) {
         // Obtener el canal
-        const channels = await workspaceChannelRepository.getByWorkspaceId(workspaceId);
-        const channel = channels?.find(c => c._id.toString() === channelId);
+        const channels = await workspaceChannelRepository.getByWorkspaceId(workspace_id);
+        const channel = channels.find(channel => channel._id.toString() === channel_id);
 
         if (!channel) {
             throw new ServerError('Canal no encontrado', 404);
         }
 
+        if (channel.fk_workspace_id.toString() !== workspace_id) {
+            throw new ServerError('El canal no pertenece al workspace', 403);
+        }
+
         // Eliminar canal (hard delete)
-        await workspaceChannelRepository.hardDeleteById(workspaceId, channelId);
+        await workspaceChannelRepository.hardDeleteById(workspace_id, channel_id);
     }
 }
 

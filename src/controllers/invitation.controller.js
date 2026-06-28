@@ -4,9 +4,9 @@ const invitationController = {
     async createInvitation(req, res, next) {
         try {
             const { workspace_id } = req.params;
-            const userId = req.user.userId;
+            const user_id = req.user.user_id;
             const result = await invitationService.createInvitation(
-                userId,
+                user_id,
                 workspace_id,
                 req.body
             );

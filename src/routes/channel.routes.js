@@ -33,16 +33,6 @@ channel_router.get(
     channelController.getChannelById
 );
 
-// DELETE /api/channels/:channel_id
-channel_router.delete(
-    '/:channel_id',
-    validateObjectIdMiddleware('channel_id'),
-    (req, res, next) => {
-        return channelMembershipMiddleware({ requiredRoles: [MEMBER_WORKSPACE_ROLES.OWNER, MEMBER_WORKSPACE_ROLES.ADMIN] })(req, res, next);
-    },
-    channelController.deleteChannel
-);
-
 // GET /api/channels/:channel_id/messages
 channel_router.get(
     '/:channel_id/messages',

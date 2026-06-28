@@ -4,8 +4,8 @@ const channelController = {
     async createChannel(req, res, next) {
         try {
             const { workspace_id } = req.params;
-            const userId = req.user.userId;
-            const result = await channelService.createChannel(userId, workspace_id, req.body);
+            const user_id = req.user.user_id;
+            const result = await channelService.createChannel(user_id, workspace_id, req.body);
 
             return res.status(201).json({
                 ok: true,
@@ -49,9 +49,9 @@ const channelController = {
 
     async deleteChannel(req, res, next) {
         try {
-            const { channel_id } = req.params;
-            const userId = req.user.userId;
-            await channelService.deleteChannel(userId, channel_id);
+            const { workspace_id, channel_id } = req.params;
+            const user_id = req.user.user_id;
+            await channelService.deleteChannel(user_id, workspace_id, channel_id);
 
             return res.status(200).json({
                 ok: true,

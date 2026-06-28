@@ -11,9 +11,6 @@ import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js'
  * - Crear y gestionar workspaces
  * - Crear canal general automáticamente
  * - Validaciones de negocio (workspace no duplicado)
- * 
- * NO hace:
- * - Validación de formato (responsabilidad de middlewares)
  */
 class WorkspaceService {
     /**
@@ -23,7 +20,6 @@ class WorkspaceService {
      */
     async createWorkspace(userId, workspaceData) {
         const { name, description } = workspaceData;
-
         // Crear workspace
         const workspace = await workspaceRepository.create(name, description || null);
 
@@ -43,18 +39,20 @@ class WorkspaceService {
 
         return {
             _id: workspace._id,
-            name: workspace.name,
-            description: workspace.description,
-            creation_date: workspace.creation_date
         };
     }
 
     /**
      * Obtiene todos los workspaces donde el usuario es miembro
      */
-    async getWorkspacesByUser(userId) {
-        const memberships = await workspaceMemberRepository.getByUserId(userId);
-        return memberships;
+    async getWorkspacesByUser(user_id) {
+        const memberships = await workspaceMemberRepository.getByUserId(user_id);
+        if (!memberships) {
+            throw new ServerError('No se encontraron workspaces para el usuario', 404);
+        }
+
+        const activeWorkspaces = memberships.filter(membership => membership.workspace_estado);
+        return activeWorkspaces.length > 0 ? activeWorkspaces : null;
     }
 
     /**
@@ -70,8 +68,7 @@ class WorkspaceService {
         return {
             _id: workspace._id,
             name: workspace.name,
-            description: workspace.description,
-            creation_date: workspace.creation_date
+            description: workspace.description
         };
     }
 
@@ -83,19 +80,23 @@ class WorkspaceService {
         const { name, description } = updateData;
 
         const dataToUpdate = {};
-        if (name) dataToUpdate.name = name;
-        if (description !== undefined) dataToUpdate.descripcion = description;
+        if (name) {
+            dataToUpdate.name = name;
+        }
+        if (description !== undefined) {
+            dataToUpdate.description = description;
+        }
 
-        const updatedWorkspace = await workspaceRepository.updateById(
+        const updated_workspace = await workspaceRepository.updateById(
             workspaceId,
             dataToUpdate
         );
+        const workspace = await workspaceRepository.getById(workspaceId);
 
         return {
-            _id: updatedWorkspace._id,
-            name: updatedWorkspace.name,
-            description: updatedWorkspace.descripcion,
-            creation_date: updatedWorkspace.creation_date
+            _id: workspace._id,
+            name: workspace.name,
+            description: workspace.description
         };
     }
 

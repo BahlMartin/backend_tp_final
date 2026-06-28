@@ -2,69 +2,91 @@ import ServerError from '../utils/helpers/serverError.helpers.js';
 import invitationWorkspaceRepository from '../repositories/invitationWorkspace.repository.js';
 import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
 import userRepository from '../repositories/user.repository.js';
-import { validators } from '../utils/validators/validators.js'
+import workspaceRepository from '../repositories/workspace.repository.js';
 import INVITATION_STATES from '../utils/constants/invitationWorkspaceStates.constants.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
-import MailService from './mail.service.js';
+import mailService from './mail.service.js';
 
 class InvitationService {
-    async createInvitation(userId, workspaceId, invitationData) {
+    async createInvitation(user_id, workspaceId, invitationData) {
         const { email } = invitationData;
 
-        validators.email(email);
-
         // Verificar que el usuario invitador es miembro del workspace
-        const inviterMembership = await workspaceMemberRepository.getByUserAndWorkspaceId(
-            workspaceId,
-            userId
+        const inviter_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(
+            user_id,
+            workspaceId
         );
 
-        if (!inviterMembership) {
-            throw new ServerError('No tienes permiso para invitar miembros', 403);
+        //si el usuario no es miembro del workspace, no puede invitar
+        if (!inviter_membership) {
+            throw new ServerError('No sos un usuario del espacio de trabajo', 401);
+        }
+
+        //si es member no puede invitar 
+        if (inviter_membership.rol === MEMBER_WORKSPACE_ROLES.MEMBER) {
+            throw new ServerError('No tenes permisos para invitar usuarios', 403);
         }
 
         // Verificar que no intente invitarse a sí mismo
-        const invitedUser = await userRepository.getByEmail(email);
-        if (invitedUser && invitedUser._id.toString() === userId) {
+        const invited_user = await userRepository.getByEmail(email);
+        if (!invited_user) {
+            throw new ServerError('El usuario no existe', 404);
+        }
+        // el usuario no esta activo
+        if (invited_user.active !== true) {
+            throw new ServerError('El usuario no se encuentra activo', 403);
+        }
+        // el usuario no tiene verificado el mail
+        if (invited_user.verification_email !== true) {
+            throw new ServerError('El usuario no tiene verificado su correo electrónico', 403);
+        }
+        // usuario que esta invitando y que quiere invitar es el mismo
+        if (invited_user._id.toString() === user_id) {
             throw new ServerError('No puedes invitarte a ti mismo', 400);
         }
-
         // Verificar que el usuario no es ya miembro del workspace
-        if (invitedUser) {
-            const existingMembership = await workspaceMemberRepository.getByUserAndWorkspaceId(
+        if (invited_user) {
+            const existing_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(
                 workspaceId,
-                invitedUser._id
+                invited_user._id
             );
 
-            if (existingMembership) {
+            if (existing_membership) {
                 throw new ServerError('Este usuario ya es miembro del workspace', 409);
             }
         }
 
         // Crear invitación
         const invitation = await invitationWorkspaceRepository.create(
-            userId,
-            invitedUser?._id || null,
+            user_id,
+            invited_user._id,
             workspaceId,
             new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 días
         );
 
-        // Enviar email de invitación (si es posible)
+        // Obtener datos del invitador y del workspace para el email
+        const inviter = await userRepository.getById(user_id);
+        const workspace = await workspaceRepository.getById(workspaceId);
+
+        // Enviar email de invitación
         try {
-            const mailService = new MailService();
-            await mailService.sendInvitationEmail(email, invitation._id);
+            await mailService.sendInvitationEmail(
+                email,
+                invitation._id,
+                inviter.user_name,
+                workspace.name
+            );
         } catch (error) {
             console.error('Error enviando email de invitación:', error);
         }
 
         return {
             _id: invitation._id,
-            invited_email: email,
             status: INVITATION_STATES.PENDING
         };
     }
 
-    async respondInvitation(invitationId, userId, decision) {
+    async respondInvitation(invitationId, user_id, decision) {
         if (!['accept', 'reject'].includes(decision)) {
             throw new ServerError('Decisión inválida. Use "accept" o "reject"', 400);
         }
@@ -82,7 +104,7 @@ class InvitationService {
             });
 
             // Crear membership como MEMBER
-            await workspaceMemberRepository.create(userId, invitation.fk_workspace_id, MEMBER_WORKSPACE_ROLES.MEMBER);
+            await workspaceMemberRepository.create(user_id, invitation.fk_workspace_id, MEMBER_WORKSPACE_ROLES.MEMBER);
 
             return {
                 _id: invitation._id,

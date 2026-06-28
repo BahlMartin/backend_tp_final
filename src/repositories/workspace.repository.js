@@ -2,10 +2,10 @@ import Workspace from '../models/workspace.model.js';
 
 class WorkspaceRepository {
 
-    async create(name, descripcion) {
+    async create(name, description) {
         return await Workspace.create({
             name,
-            descripcion,
+            description,
         });
     }
 

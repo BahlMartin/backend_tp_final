@@ -6,20 +6,26 @@ function workspaceMemberMiddleware(requiredRoles = []) {
     return async (req, res, next) => {
         try {
             const { workspace_id } = req.params;
-            const userId = req.user?.userId;
+            const user_id = req.user.user_id;
 
-            if (!userId) {
+            if (!user_id) {
                 throw new ServerError('Usuario no autenticado', 401);
             }
 
             // Verificar que el workspace existe
             const workspace = await workspaceRepository.getById(workspace_id);
+
             if (!workspace) {
                 throw new ServerError('Workspace no encontrado', 404);
             }
 
+            if (!workspace.active) {
+                throw new ServerError('Workspace inactivo', 403);
+            }
+
             // Verificar que el usuario es miembro activo del workspace
-            const membership = await workspaceMemberRepository.getByUserAndWorkspaceId(workspace_id, userId);
+            const membership = await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, workspace_id);
+
 
             if (!membership || !membership.active) {
                 throw new ServerError(

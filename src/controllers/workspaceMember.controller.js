@@ -19,9 +19,9 @@ const workspaceMemberController = {
     async updateMemberRole(req, res, next) {
         try {
             const { workspace_id, member_id } = req.params;
-            const userId = req.user.userId;
+            const user_id = req.user.user_id;
             const result = await workspaceMemberService.updateMemberRole(
-                userId,
+                user_id,
                 workspace_id,
                 member_id,
                 req.body
@@ -40,8 +40,8 @@ const workspaceMemberController = {
     async removeMember(req, res, next) {
         try {
             const { workspace_id, member_id } = req.params;
-            const userId = req.user.userId;
-            await workspaceMemberService.removeMember(userId, workspace_id, member_id);
+            const user_id = req.user.user_id;
+            await workspaceMemberService.removeMember(user_id, workspace_id, member_id);
 
             return res.status(200).json({
                 ok: true,

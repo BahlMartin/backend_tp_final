@@ -3,8 +3,8 @@ import workspaceService from '../services/workspace.service.js';
 const workspaceController = {
     async createWorkspace(req, res, next) {
         try {
-            const userId = req.user.userId;
-            const result = await workspaceService.createWorkspace(userId, req.body);
+            const user_id = req.user.user_id;
+            const result = await workspaceService.createWorkspace(user_id, req.body);
 
             return res.status(201).json({
                 ok: true,
@@ -18,8 +18,8 @@ const workspaceController = {
 
     async getMyWorkspaces(req, res, next) {
         try {
-            const userId = req.user.userId;
-            const result = await workspaceService.getWorkspacesByUser(userId);
+            const user_id = req.user.user_id;
+            const result = await workspaceService.getWorkspacesByUser(user_id);
 
             return res.status(200).json({
                 ok: true,

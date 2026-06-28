@@ -22,32 +22,33 @@ class WorkspaceMemberRepository {
 
     async getByUserId(user_id) {
         const result = await WorkspaceMember.find({ fk_user_id: user_id }).populate({
-            path: 'fk_workspace_id', 
-            select: 'name description active', 
-            match: { active: true } 
+            path: 'fk_workspace_id',
+            select: 'name description active',
+            match: { active: true }
         })
 
-        
+
         return result.filter(membership => membership.fk_workspace_id).map(membership => ({
             member_id: membership._id,
             member_rol: membership.rol,
             member_fecha_creacion: membership.fecha_creacion,
-            workspace_id: membership.fk_workspace_id._id, 
+            workspace_id: membership.fk_workspace_id._id,
             workspace_nombre: membership.fk_workspace_id.name,
             workspace_descripcion: membership.fk_workspace_id.description,
             workspace_estado: membership.fk_workspace_id.active
         })
         )
     }
-    
+
     async getMembersByWorkspaceId(workspace_id) {
-        const result = await WorkspaceMember.find({ 
-            fk_workspace_id: workspace_id, }).populate({
-                path: 'fk_user_id', 
-                select: 'user_name email' ,
-                match: { active: true }
-            })
-    
+        const result = await WorkspaceMember.find({
+            fk_workspace_id: workspace_id,
+        }).populate({
+            path: 'fk_user_id',
+            select: 'user_name email',
+            match: { active: true }
+        })
+
         const members_mapped = result.map(
             (member) => ({
                 member_id: member._id,
@@ -59,7 +60,7 @@ class WorkspaceMemberRepository {
         )
         return members_mapped
     }
-    
+
     async updateById(member_id, update) {
         return await WorkspaceMember.findByIdAndUpdate(member_id, update)
     }
