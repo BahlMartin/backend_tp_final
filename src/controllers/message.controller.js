@@ -4,7 +4,12 @@ const messageController = {
     async getMessages(req, res, next) {
         try {
             const { channel_id } = req.params;
-            const result = await messageService.getMessagesByChannel(channel_id);
+            const { page, limit } = req.query;
+
+            const parsedPage = page ? parseInt(page, 10) : 1;
+            const parsedLimit = limit ? parseInt(limit, 10) : 10;
+
+            const result = await messageService.getMessagesByChannel(channel_id, parsedPage, parsedLimit);
 
             return res.status(200).json({
                 ok: true,

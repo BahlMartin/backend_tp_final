@@ -2,15 +2,8 @@ import ServerError from '../utils/helpers/serverError.helpers.js';
 import channelMessageRepository from '../repositories/channelMessage.repository.js';
 
 class MessageService {
-    async getMessagesByChannel(channel_id) {
-        const messages = await channelMessageRepository.getByChannelId(channel_id);
-
-        return messages.map(message => ({
-            message_id: message._id,
-            message: message.message,
-            fk_user_id: message.member_name,
-            modification_date: message.modification_date
-        }));
+    async getMessagesByChannel(channel_id, page, limit) {
+        return await channelMessageRepository.getByChannelIdWithPagination(channel_id, page, limit);
     }
 
     async createMessage(channel_member_id, channel_id, message_data) {
