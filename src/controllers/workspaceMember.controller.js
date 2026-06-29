@@ -24,7 +24,8 @@ const workspaceMemberController = {
                 user_id,
                 workspace_id,
                 member_id,
-                req.body
+                req.body,
+                req.workspaceMembership
             );
 
             return res.status(200).json({
@@ -41,7 +42,12 @@ const workspaceMemberController = {
         try {
             const { workspace_id, member_id } = req.params;
             const user_id = req.user.user_id;
-            await workspaceMemberService.removeMember(user_id, workspace_id, member_id);
+            await workspaceMemberService.removeMember(
+                user_id,
+                workspace_id,
+                member_id,
+                req.workspaceMembership
+            );
 
             return res.status(200).json({
                 ok: true,

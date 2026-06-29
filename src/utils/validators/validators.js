@@ -3,29 +3,29 @@ import mongoose from 'mongoose';
 // Validadores reutilizables - contienen únicamente lógica de validación de formato
 export const validators = {
     email: (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        const email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email_regex.test(email)) {
             throw new ServerError('El email ingresado no es válido', 400);
         }
     },
 
     password: (password) => {
-        const minLength = password.length >= 6;
-        const hasLower = /[a-z]/.test(password);
-        const hasUpper = /[A-Z]/.test(password);
-        const hasNumber = /[0-9]/.test(password);
+        const min_length = password.length >= 6;
+        const has_lower = /[a-z]/.test(password);
+        const has_upper = /[A-Z]/.test(password);
+        const has_number = /[0-9]/.test(password);
 
-        if (!minLength || !hasLower || !hasUpper || !hasNumber) {
+        if (!min_length || !has_lower || !has_upper || !has_number) {
             throw new ServerError(
-                'La contraseña debe tener mínimo 6 caracteres, incluir mayúscula, minúscula y número',
+                'La contraseña no cumple los requisitos mínimos',
                 400
             );
         }
     },
 
-    firstName: (firstName) => {
-        const isValid = /^[a-zA-Z]{3,}$/.test(firstName);
-        if (!isValid) {
+    firstName: (first_name) => {
+        const is_valid = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{3,}$/.test(first_name);
+        if (!is_valid) {
             throw new ServerError(
                 'El nombre debe contener solo letras y tener mínimo 3 caracteres',
                 400
@@ -33,9 +33,9 @@ export const validators = {
         }
     },
 
-    lastName: (lastName) => {
-        const isValid = /^[a-zA-Z]{3,}$/.test(lastName);
-        if (!isValid) {
+    lastName: (last_name) => {
+        const is_valid = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{3,}$/.test(last_name);
+        if (!is_valid) {
             throw new ServerError(
                 'El apellido debe contener solo letras y tener mínimo 3 caracteres',
                 400
@@ -43,9 +43,9 @@ export const validators = {
         }
     },
 
-    userName: (userName) => {
-        const isValid = userName && userName.length >= 3;
-        if (!isValid) {
+    userName: (user_name) => {
+        const is_valid = user_name && user_name.length >= 3;
+        if (!is_valid) {
             throw new ServerError(
                 'El nombre de usuario debe tener mínimo 3 caracteres',
                 400
@@ -54,8 +54,8 @@ export const validators = {
     },
 
     workspaceName: (name) => {
-        const isValid = name && name.length >= 3;
-        if (!isValid) {
+        const is_valid = name && name.length >= 3;
+        if (!is_valid) {
             throw new ServerError(
                 'El nombre del workspace debe tener mínimo 3 caracteres',
                 400
@@ -64,8 +64,8 @@ export const validators = {
     },
 
     channelName: (name) => {
-        const isValid = name && name.length >= 3;
-        if (!isValid) {
+        const is_valid = name && name.length >= 3;
+        if (!is_valid) {
             throw new ServerError(
                 'El nombre del canal debe tener mínimo 3 caracteres',
                 400
@@ -74,8 +74,8 @@ export const validators = {
     },
 
     workspaceDescription: (description) => {
-        const isValid = description && description.length >= 3;
-        if (!isValid) {
+        const is_valid = description && description.length >= 3;
+        if (!is_valid) {
             throw new ServerError(
                 'La descripción del workspace debe tener mínimo 3 caracteres',
                 400
@@ -84,8 +84,8 @@ export const validators = {
     },
 
     channelDescription: (description) => {
-        const isValid = description && description.length >= 3;
-        if (!isValid) {
+        const is_valid = description && description.length >= 3;
+        if (!is_valid) {
             throw new ServerError(
                 'La descripción del canal debe tener mínimo 3 caracteres',
                 400
@@ -94,8 +94,8 @@ export const validators = {
     },
 
     code2FA: (code) => {
-        const isValid = /^[0-9]{6}$/.test(String(code));
-        if (!isValid) {
+        const is_valid = /^[0-9]{6}$/.test(String(code));
+        if (!is_valid) {
             throw new ServerError('El código 2FA debe ser de 6 dígitos', 400);
         }
     },
@@ -104,15 +104,15 @@ export const validators = {
         if (!token || typeof token !== 'string' || token.trim().length === 0) {
             throw new ServerError('El token es requerido y debe ser válido', 400);
         }
-        const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
-        if (!jwtRegex.test(token)) {
+        const jwt_regex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+        if (!jwt_regex.test(token)) {
             throw new ServerError('El formato del token no es válido', 400);
         }
     },
 
     messageContent: (content) => {
-        const isValid = content && content.trim().length > 0;
-        if (!isValid) {
+        const is_valid = content && content.trim().length > 0;
+        if (!is_valid) {
             throw new ServerError(
                 'El contenido del mensaje no puede estar vacío',
                 400

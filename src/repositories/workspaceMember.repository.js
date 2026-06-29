@@ -1,11 +1,10 @@
-import mongoose from "mongoose";
 import WorkspaceMember from "../models/workspaceMembers.model.js"
 
 class WorkspaceMemberRepository {
-    async create(userId, workspaceId, role) {
+    async create(user_id, workspace_id, role) {
         const new_membership = await WorkspaceMember.create({
-            fk_workspace_id: workspaceId,
-            fk_user_id: userId,
+            fk_workspace_id: workspace_id,
+            fk_user_id: user_id,
             rol: role
         })
         return new_membership
@@ -62,7 +61,7 @@ class WorkspaceMemberRepository {
     }
 
     async updateById(member_id, update) {
-        return await WorkspaceMember.findByIdAndUpdate(member_id, update)
+        return await WorkspaceMember.findByIdAndUpdate(member_id, update, { returnDocument: 'after' })
     }
 
     async deleteById(member_id) {
@@ -73,11 +72,19 @@ class WorkspaceMemberRepository {
         return await WorkspaceMember.findById(member_id)
     }
 
+    async getWorkspaceOwner(workspace_id) {
+        return await WorkspaceMember.findOne({
+            fk_workspace_id: workspace_id,
+            rol: 'owner',
+            active: true
+        });
+    }
+
 }
 
-export const workspacememberRepository = new WorkspaceMemberRepository();
+export const workspaceMemberRepository = new WorkspaceMemberRepository();
 
-export default workspacememberRepository
+export default workspaceMemberRepository;
 
 
 

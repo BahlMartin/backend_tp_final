@@ -8,7 +8,9 @@ const invitationController = {
             const result = await invitationService.createInvitation(
                 user_id,
                 workspace_id,
-                req.body
+                req.body,
+                req.workspace,
+                req.workspaceMembership
             );
 
             return res.status(201).json({
@@ -28,7 +30,8 @@ const invitationController = {
             const result = await invitationService.respondInvitation(
                 invitation_id,
                 user_id,
-                decision
+                decision,
+                req.invitation
             );
 
             return res.status(200).json({

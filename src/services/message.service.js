@@ -48,7 +48,7 @@ class MessageService {
         const limit_date = new Date(modification_date);
 
         if (isNaN(limit_date.getTime()) || now > limit_date) {
-            throw new ServerError('El tiempo límite para modificar el mensaje ha expirado', 400);
+            throw new ServerError('El tiempo permitido para modificar el mensaje ha expirado', 403);
         }
 
         // Actualizar mensaje
@@ -67,7 +67,7 @@ class MessageService {
         const limit_date = new Date(modification_date);
 
         if (isNaN(limit_date.getTime()) || now > limit_date) {
-            throw new ServerError('El tiempo límite para eliminar el mensaje ha expirado', 400);
+            throw new ServerError('El tiempo permitido para modificar el mensaje ha expirado', 403);
         }
 
         await channelMessageRepository.hardDeleteById(message_id);

@@ -43,10 +43,49 @@ class AuthService {
      * Registra un nuevo usuario
      * 
      */
-    async registerUser(userData) {
-        const { email, password, first_name, last_name, user_name } = userData; const existing_user = await userRepository.getByEmail(email);
+    async registerUser(user_data) {
+        const { email, password, first_name, last_name, user_name } = user_data;
+        const existing_user = await userRepository.getByEmail(email);
         if (existing_user) {
-            throw new ServerError('El email ya se encuentra registrado', 409);
+            if (existing_user.verification_email) {
+                throw new ServerError('El email ya se encuentra registrado', 409);
+            }
+
+            // Si existe y no está verificado, revisar si tiene token vigente
+            const existing_token = await verificationTokenRepository.getValidByUserIdAndType(
+                existing_user._id,
+                TOKEN_TYPES.VERIFICATION_EMAIL
+            );
+
+            if (existing_token) {
+                throw new ServerError('Ya existe un token de verificación vigente', 409);
+            }
+
+            // Si no tiene token vigente, generar uno nuevo y reenviar email
+            const verification_token = jwt.sign(
+                { user_id: existing_user._id },
+                ENVIRONMENT.JWT_SECRET,
+                { expiresIn: '15m' }
+            );
+
+            await verificationTokenRepository.create(
+                existing_user._id,
+                verification_token,
+                TOKEN_TYPES.VERIFICATION_EMAIL,
+                new Date(Date.now() + 15 * 60 * 1000)
+            );
+
+            try {
+                await mailService.sendVerificationEmail(existing_user.email, verification_token);
+            } catch (error) {
+                console.error('Error reenviando email de verificación:', error);
+            }
+
+            return {
+                user_id: existing_user._id,
+                email: existing_user.email,
+                message: 'Usuario registrado. Revisa tu email para verificar tu cuenta.'
+            };
         }
 
         // Hash de contraseña
@@ -71,7 +110,7 @@ class AuthService {
         await verificationTokenRepository.create(
             user._id,
             verification_token,
-            TOKEN_TYPES.VARIFICATION_EMAIL,
+            TOKEN_TYPES.VERIFICATION_EMAIL,
             new Date(Date.now() + 15 * 60 * 1000)
         );
 
@@ -131,12 +170,21 @@ class AuthService {
             throw new ServerError('Email no verificado. Revisa tu correo.', 403);
         }
 
+        // Validar si ya hay un código 2FA vigente
+        const existing_2fa = await verificationTokenRepository.getValidByUserIdAndType(
+            user._id,
+            TOKEN_TYPES.CODE2FA
+        );
+        if (existing_2fa) {
+            throw new ServerError('Ya existe un código 2FA vigente', 409);
+        }
+
         // Generar código 2FA (6 dígitos)
-        const code2FA = String(Math.floor(100000 + Math.random() * 900000));
+        const code_2fa = String(Math.floor(100000 + Math.random() * 900000));
 
         // Guardar código 2FA (15 minutos de validez)
         const verification_token = jwt.sign(
-            { user_id: user._id, code: code2FA },
+            { user_id: user._id, code: code_2fa },
             ENVIRONMENT.JWT_SECRET,
             { expiresIn: '15m' }
         );
@@ -150,7 +198,7 @@ class AuthService {
 
 
         try {
-            await mailService.send2FAEmail(user.email, code2FA);
+            await mailService.send2FAEmail(user.email, code_2fa);
         } catch (error) {
             console.error('Error enviando código 2FA:', error);
         }
@@ -190,10 +238,10 @@ class AuthService {
         } catch (error) {
             throw new ServerError('Token 2FA inválido o expirado', 401);
         }
-        const code_token = parseInt(decoded_token.code)
+        const code_token = String(decoded_token.code);
 
         // Verificar que el código coincida
-        if (code_token !== code) {
+        if (code_token !== String(code)) {
             throw new ServerError('Código 2FA incorrecto', 401);
         }
 
@@ -230,6 +278,15 @@ class AuthService {
             };
         }
 
+        // Validar si ya hay un token de recuperación vigente
+        const existing_token = await verificationTokenRepository.getValidByUserIdAndType(
+            user._id,
+            TOKEN_TYPES.RESET_PASSWORD
+        );
+        if (existing_token) {
+            throw new ServerError('Ya existe un token de recuperación vigente', 409);
+        }
+
         // Generar token de recuperación (5 minutos)
         const reset_token = jwt.sign(
             { user_id: user._id },
@@ -259,13 +316,13 @@ class AuthService {
      * Actualiza la contraseña usando token de recuperación
      * 
      */
-    async resetPassword(token, newPassword) {
+    async resetPassword(token, new_password) {
         // Verificar y decodificar token JWT
         const decoded = jwt.verify(token, ENVIRONMENT.JWT_SECRET);
         const user_id = decoded.user_id;
 
         // Hash de la nueva contraseña
-        const hashed_password = await bcrypt.hash(newPassword, 12);
+        const hashed_password = await bcrypt.hash(new_password, 12);
 
         // Actualizar contraseña en base de datos
         await userRepository.updateById(user_id, { password: hashed_password });

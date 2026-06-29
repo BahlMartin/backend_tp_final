@@ -1,45 +1,44 @@
-import mongoose from 'mongoose';
 import WorkspaceChannel from '../models/workspaceChannel.model.js';
 
 class WorkspaceChannelRepository {
 
-    async create(workspaceId, name, description) {
+    async create(workspace_id, name, description) {
         return await WorkspaceChannel.create({
-            fk_workspace_id: workspaceId,
+            fk_workspace_id: workspace_id,
             name,
             description
         });
     }
 
-    async getById(workspaceId, channelId) {
+    async getById(workspace_id, channel_id) {
         return await WorkspaceChannel.findOne({
-            fk_workspace_id: workspaceId,
-            _id: channelId
+            fk_workspace_id: workspace_id,
+            _id: channel_id
         });
     }
 
-    async getByChannelId(channelId) {
-        return await WorkspaceChannel.findById(channelId);
+    async getByChannelId(channel_id) {
+        return await WorkspaceChannel.findById(channel_id);
     }
 
-    async getByWorkspaceId(workspaceId) {
+    async getByWorkspaceId(workspace_id) {
         return await WorkspaceChannel.find({
-            fk_workspace_id: workspaceId
+            fk_workspace_id: workspace_id
         });
     }
 
-    async hardDeleteById(workspaceId, channelId) {
+    async hardDeleteById(workspace_id, channel_id) {
         return await WorkspaceChannel.findOneAndDelete({
-            fk_workspace_id: workspaceId,
-            _id: channelId
+            fk_workspace_id: workspace_id,
+            _id: channel_id
         });
     }
 
-    async updateById(workspaceId, channelId, data) {
+    async updateById(workspace_id, channel_id, data) {
         return await WorkspaceChannel.findOneAndUpdate({
-            fk_workspace_id: workspaceId,
-            _id: channelId
-        }, data, { new: true });
+            fk_workspace_id: workspace_id,
+            _id: channel_id
+        }, data, { returnDocument: 'after' });
     }
 
 

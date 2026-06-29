@@ -34,7 +34,7 @@ const workspaceController = {
     async getWorkspaceById(req, res, next) {
         try {
             const { workspace_id } = req.params;
-            const result = await workspaceService.getWorkspaceById(workspace_id);
+            const result = await workspaceService.getWorkspaceById(workspace_id, req.workspace);
 
             return res.status(200).json({
                 ok: true,
@@ -64,7 +64,7 @@ const workspaceController = {
     async deleteWorkspace(req, res, next) {
         try {
             const { workspace_id } = req.params;
-            await workspaceService.deleteWorkspace(workspace_id);
+            await workspaceService.deleteWorkspace(workspace_id, req.workspace);
 
             return res.status(200).json({
                 ok: true,

@@ -7,7 +7,7 @@ const workspaceSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
+        required: false
     },
     creation_date: {
         type: Date,

@@ -2,6 +2,7 @@ import ServerError from '../utils/helpers/serverError.helpers.js';
 import workspaceRepository from '../repositories/workspace.repository.js';
 import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
 import workspaceChannelRepository from '../repositories/workspaceChannel.repository.js';
+import channelMemberRepository from '../repositories/channelMember.repository.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
 
 /**
@@ -18,23 +19,29 @@ class WorkspaceService {
      * Asume que el nombre ya fue validado por middleware
      * Automáticamente crea canal general y agrega usuario como owner
      */
-    async createWorkspace(userId, workspaceData) {
-        const { name, description } = workspaceData;
+    async createWorkspace(user_id, workspace_data) {
+        const { name, description } = workspace_data;
         // Crear workspace
         const workspace = await workspaceRepository.create(name, description || null);
 
         // Agregar usuario como owner del workspace
-        await workspaceMemberRepository.create(
-            userId,
+        const owner_member = await workspaceMemberRepository.create(
+            user_id,
             workspace._id,
             MEMBER_WORKSPACE_ROLES.OWNER
         );
 
         // Crear canal general automáticamente
-        await workspaceChannelRepository.create(
+        const general_channel = await workspaceChannelRepository.create(
             workspace._id,
             'general',
             'Canal general del workspace'
+        );
+
+        // Agregar automáticamente al Owner al canal general creado
+        await channelMemberRepository.create(
+            general_channel._id,
+            owner_member._id
         );
 
         return {
@@ -51,15 +58,15 @@ class WorkspaceService {
             throw new ServerError('No se encontraron workspaces para el usuario', 404);
         }
 
-        const activeWorkspaces = memberships.filter(membership => membership.workspace_estado);
-        return activeWorkspaces.length > 0 ? activeWorkspaces : null;
+        const active_workspaces = memberships.filter(membership => membership.workspace_estado);
+        return active_workspaces.length > 0 ? active_workspaces : null;
     }
 
     /**
      * Obtiene información de un workspace específico
      */
-    async getWorkspaceById(workspaceId) {
-        const workspace = await workspaceRepository.getById(workspaceId);
+    async getWorkspaceById(workspace_id, precargado = null) {
+        const workspace = precargado || await workspaceRepository.getById(workspace_id);
 
         if (!workspace) {
             throw new ServerError('Workspace no encontrado', 404);
@@ -76,42 +83,41 @@ class WorkspaceService {
      * Actualiza información del workspace
      * Asume que los datos ya fueron validados por middleware si se envían
      */
-    async updateWorkspace(workspaceId, updateData) {
-        const { name, description } = updateData;
+    async updateWorkspace(workspace_id, update_data) {
+        const { name, description } = update_data;
 
-        const dataToUpdate = {};
+        const data_to_update = {};
         if (name) {
-            dataToUpdate.name = name;
+            data_to_update.name = name;
         }
         if (description !== undefined) {
-            dataToUpdate.description = description;
+            data_to_update.description = description;
         }
 
         const updated_workspace = await workspaceRepository.updateById(
-            workspaceId,
-            dataToUpdate
+            workspace_id,
+            data_to_update
         );
-        const workspace = await workspaceRepository.getById(workspaceId);
 
         return {
-            _id: workspace._id,
-            name: workspace.name,
-            description: workspace.description
+            _id: updated_workspace._id,
+            name: updated_workspace.name,
+            description: updated_workspace.description
         };
     }
 
     /**
      * Elimina un workspace (soft delete)
      */
-    async deleteWorkspace(workspaceId) {
-        const workspace = await workspaceRepository.getById(workspaceId);
+    async deleteWorkspace(workspace_id, preloaded_workspace = null) {
+        const workspace = preloaded_workspace || await workspaceRepository.getById(workspace_id);
 
         if (!workspace) {
             throw new ServerError('Workspace no encontrado', 404);
         }
 
         // Marcar como inactivo (soft delete)
-        await workspaceRepository.softDeleteById(workspaceId);
+        await workspaceRepository.softDeleteById(workspace_id);
     }
 }
 

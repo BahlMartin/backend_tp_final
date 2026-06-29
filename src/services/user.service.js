@@ -37,8 +37,8 @@ class UserService {
 
         // Validacion de negocio: verificar que el email no este duplicado
         if (email) {
-            const existingUser = await userRepository.getByEmail(email);
-            if (existingUser && existingUser._id.toString() !== user_id) {
+            const existing_user = await userRepository.getByEmail(email);
+            if (existing_user && existing_user._id.toString() !== user_id) {
                 throw new ServerError('El email ya se encuentra registrado', 409);
             }
         }
@@ -50,10 +50,10 @@ class UserService {
         if (last_name) { data_to_update.last_name = last_name; }
         if (user_name) { data_to_update.user_name = user_name; }
 
-        const updatedUser = await userRepository.updateById(user_id, data_to_update);
+        const updated_user = await userRepository.updateById(user_id, data_to_update);
 
         return {
-            user_id: updatedUser._id
+            user_id: updated_user._id
         };
     }
 }

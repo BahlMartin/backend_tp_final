@@ -8,13 +8,13 @@ import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js'
 import mailService from './mail.service.js';
 
 class InvitationService {
-    async createInvitation(user_id, workspaceId, invitationData) {
-        const { email } = invitationData;
+    async createInvitation(user_id, workspace_id, invitation_data, preloaded_workspace = null, preloaded_membership = null) {
+        const { email } = invitation_data;
 
         // Verificar que el usuario invitador es miembro del workspace
-        const inviter_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(
+        const inviter_membership = preloaded_membership || await workspaceMemberRepository.getByUserAndWorkspaceId(
             user_id,
-            workspaceId
+            workspace_id
         );
 
         //si el usuario no es miembro del workspace, no puede invitar
@@ -47,12 +47,23 @@ class InvitationService {
         // Verificar que el usuario no es ya miembro del workspace
         if (invited_user) {
             const existing_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(
-                workspaceId,
-                invited_user._id
+                invited_user._id,
+                workspace_id
             );
 
             if (existing_membership) {
                 throw new ServerError('Este usuario ya es miembro del workspace', 409);
+            }
+
+            // Verificar si ya existe una invitación vigente en estado pending del mismo inviter al mismo usuario en el mismo workspace
+            const existing_invitation = await invitationWorkspaceRepository.getInvitationByInviterInvitedAndWorkspace(
+                user_id,
+                invited_user._id,
+                workspace_id
+            );
+
+            if (existing_invitation && existing_invitation.status === INVITATION_STATES.PENDING) {
+                throw new ServerError('Ya existe una invitación pendiente para este usuario en este workspace', 409);
             }
         }
 
@@ -60,13 +71,13 @@ class InvitationService {
         const invitation = await invitationWorkspaceRepository.create(
             user_id,
             invited_user._id,
-            workspaceId,
+            workspace_id,
             new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 días
         );
 
         // Obtener datos del invitador y del workspace para el email
         const inviter = await userRepository.getById(user_id);
-        const workspace = await workspaceRepository.getById(workspaceId);
+        const workspace = preloaded_workspace || await workspaceRepository.getById(workspace_id);
 
         // Enviar email de invitación
         try {
@@ -86,22 +97,22 @@ class InvitationService {
         };
     }
 
-    async respondInvitation(invitationId, user_id, decision) {
+    async respondInvitation(invitation_id, user_id, decision, preloaded_invitation = null) {
 
 
-        const invitation = await invitationWorkspaceRepository.getInvitationByInvitedAndWorkspace(user_id, invitationId);
+        const invitation = preloaded_invitation || await invitationWorkspaceRepository.getInvitationById(invitation_id);
 
-        if (!invitation) {
+        if (!invitation || invitation.fk_invited_user_id.toString() !== user_id) {
             throw new ServerError('No tenes invitaciones de este espacio de trabajo', 404);
         }
         // el usuario no tiene que aceptar su propia invitacion
-        if (invitation.fk_inviter_id.toString() === user_id) {
+        if (invitation.fk_inviter_user_id.toString() === user_id) {
             throw new ServerError('No puedes aceptar tu propia invitación', 400);
         }
 
-        if (decision === 'accept') {
+        if (decision === INVITATION_STATES.ACCEPTED) {
             // Cambiar estado a accepted y crear membership
-            await invitationWorkspaceRepository.updateInvitation(invitationId, {
+            await invitationWorkspaceRepository.updateInvitation(invitation_id, {
                 status: INVITATION_STATES.ACCEPTED
             });
 
@@ -115,8 +126,8 @@ class InvitationService {
             };
         } else {
             // Cambiar estado a rejected
-            await invitationWorkspaceRepository.updateInvitation(invitationId, {
-                state: INVITATION_STATES.REJECTED
+            await invitationWorkspaceRepository.updateInvitation(invitation_id, {
+                status: INVITATION_STATES.REJECTED
             });
 
             return {

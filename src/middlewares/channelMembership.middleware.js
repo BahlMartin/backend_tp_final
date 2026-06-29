@@ -40,10 +40,12 @@ function channelMembershipMiddleware(options = {}) {
 
             // 2. Validar permisos en Workspace (si aplica)
             const needs_workspace_validation = require_workspace_member || require_channel_member || required_roles.length > 0;
-            let workspace_membership = null;
+            let workspace_membership = req.workspaceMembership || req.workspace_membership || null;
 
             if (needs_workspace_validation) {
-                workspace_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, workspace_id);
+                if (!workspace_membership) {
+                    workspace_membership = await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, workspace_id);
+                }
 
                 if (!workspace_membership || !workspace_membership.active) {
                     throw new ServerError('No tienes permiso para acceder a este workspace', 403);

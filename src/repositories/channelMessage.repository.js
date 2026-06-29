@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import ChannelMessage from "../models/channelMessage.model.js";
 
 class ChannelMessageRepository {
@@ -72,18 +71,18 @@ class ChannelMessageRepository {
                 updated_at: message.modification_date
             })),
             pagination: {
-                currentPage: page,
-                pageSize: limit,
-                totalMessages: total,
-                totalPages: Math.ceil(total / limit),
-                hasNextPage: page < Math.ceil(total / limit),
-                hasPrevPage: page > 1
+                current_page: page,
+                page_size: limit,
+                total_messages: total,
+                total_pages: Math.ceil(total / limit),
+                has_next_page: page < Math.ceil(total / limit),
+                has_prev_page: page > 1
             }
         };
     }
 
     async updateById(message_id, update) {
-        return await ChannelMessage.findByIdAndUpdate(message_id, update);
+        return await ChannelMessage.findByIdAndUpdate(message_id, update, { returnDocument: 'after' });
     }
 
     async hardDeleteById(message_id) {

@@ -1,5 +1,5 @@
 const TOKEN_TYPES = {
-    VARIFICATION_EMAIL: 'verification-email',
+    VERIFICATION_EMAIL: 'verification-email',
     CODE2FA: 'code2fa',
     ACCESS: 'access',
     RESET_PASSWORD: 'reset-password'

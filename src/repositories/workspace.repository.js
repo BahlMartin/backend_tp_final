@@ -18,7 +18,7 @@ class WorkspaceRepository {
     }
 
     async updateById(workspace_id, update_data) {
-        return await Workspace.findByIdAndUpdate(workspace_id, update_data);
+        return await Workspace.findByIdAndUpdate(workspace_id, update_data, { returnDocument: 'after' });
     }
 
 }

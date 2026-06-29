@@ -5,7 +5,7 @@ const channelController = {
         try {
             const { workspace_id } = req.params;
             const user_id = req.user.user_id;
-            const result = await channelService.createChannel(user_id, workspace_id, req.body);
+            const result = await channelService.createChannel(user_id, workspace_id, req.body, req.workspaceMembership);
 
             return res.status(201).json({
                 ok: true,
@@ -35,16 +35,15 @@ const channelController = {
     async getChannelById(req, res, next) {
         try {
             const channel = req.channel;
-            const result = {
-                _id: channel._id,
-                name: channel.name,
-                description: channel.description
-            }
 
             return res.status(200).json({
                 ok: true,
                 message: 'Canal obtenido',
-                data: result
+                data: {
+                    _id: channel._id,
+                    name: channel.name,
+                    description: channel.description
+                }
             });
         } catch (error) {
             next(error);
@@ -55,7 +54,7 @@ const channelController = {
         try {
             const { workspace_id, channel_id } = req.params;
             const user_id = req.user.user_id;
-            await channelService.deleteChannel(user_id, workspace_id, channel_id);
+            await channelService.deleteChannel(user_id, workspace_id, channel_id, req.channel);
 
             return res.status(200).json({
                 ok: true,
@@ -71,7 +70,7 @@ const channelController = {
         try {
             const { workspace_id, channel_id } = req.params;
             const user_id = req.user.user_id;
-            const result = await channelService.updateChannel(user_id, workspace_id, channel_id, req.body);
+            const result = await channelService.updateChannel(user_id, workspace_id, channel_id, req.body, req.channel);
 
             return res.status(200).json({
                 ok: true,
