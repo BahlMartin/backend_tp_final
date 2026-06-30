@@ -31,7 +31,9 @@ class ChannelMemberService {
         }
         const members_id = members.map((member) => ({
             channel_member_id: member.channel_member_id,
-            member_name: member.member_name
+            workspace_member_id: member.workspace_member_id,
+            member_name: member.member_name,
+            member_email: member.member_email
         }));
         return members_id;
     }

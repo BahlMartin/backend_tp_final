@@ -47,12 +47,24 @@ class ChannelService {
     }
 
     /**
-     * Obtiene todos los canales de un workspace
+     * Obtiene todos los canales de un workspace a los que el usuario tiene acceso
      */
-    async getChannelsByWorkspace(workspace_id) {
+    async getChannelsByWorkspace(workspace_id, user_id, preloaded_membership = null) {
         const channels = await workspaceChannelRepository.getByWorkspaceId(workspace_id);
+        const workspace_membership = preloaded_membership || await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, workspace_id);
+        
+        if (!workspace_membership || !workspace_membership.active) {
+            return [];
+        }
 
-        return channels.map(channel => ({
+        const channelMemberships = await channelMemberRepository.getChannelsByWorkspaceMemberId(workspace_membership._id);
+        const memberChannelIds = channelMemberships.map(mc => mc.fk_workspace_channel_id.toString());
+
+        const filteredChannels = channels.filter(channel => 
+            channel.name === 'general' || memberChannelIds.includes(channel._id.toString())
+        );
+
+        return filteredChannels.map(channel => ({
             _id: channel._id,
             name: channel.name,
             description: channel.description

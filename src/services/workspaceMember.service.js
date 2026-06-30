@@ -1,7 +1,7 @@
 import ServerError from '../utils/helpers/serverError.helpers.js';
 import workspaceMemberRepository from '../repositories/workspaceMember.repository.js';
-import userRepository from '../repositories/user.repository.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
+import channelMemberRepository from '../repositories/channelMember.repository.js';
 
 class WorkspaceMemberService {
     async getWorkspaceMembers(workspace_id) {
@@ -72,6 +72,9 @@ class WorkspaceMemberService {
 
         // Marcar como inactivo
         await workspaceMemberRepository.updateById(member_id, { active: false });
+
+        // Eliminar de todos los canales
+        await channelMemberRepository.deleteByWorkspaceMemberId(member_id);
     }
 }
 

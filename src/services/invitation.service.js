@@ -6,6 +6,8 @@ import workspaceRepository from '../repositories/workspace.repository.js';
 import INVITATION_STATES from '../utils/constants/invitationWorkspaceStates.constants.js';
 import MEMBER_WORKSPACE_ROLES from '../utils/constants/memberRoles.constants.js';
 import mailService from './mail.service.js';
+import workspaceChannelRepository from '../repositories/workspaceChannel.repository.js';
+import channelMemberRepository from '../repositories/channelMember.repository.js';
 
 class InvitationService {
     async createInvitation(user_id, workspace_id, invitation_data, preloaded_workspace = null, preloaded_membership = null) {
@@ -51,7 +53,7 @@ class InvitationService {
                 workspace_id
             );
 
-            if (existing_membership) {
+            if (existing_membership && existing_membership.active) {
                 throw new ServerError('Este usuario ya es miembro del workspace', 409);
             }
 
@@ -116,13 +118,35 @@ class InvitationService {
                 status: INVITATION_STATES.ACCEPTED
             });
 
-            // Crear membership como MEMBER
-            await workspaceMemberRepository.create(user_id, invitation.fk_workspace_id, MEMBER_WORKSPACE_ROLES.MEMBER);
+            // Crear o reactivar membership como MEMBER
+            let newMember = await workspaceMemberRepository.getByUserAndWorkspaceId(user_id, invitation.fk_workspace_id);
+            if (newMember) {
+                newMember.active = true;
+                newMember.rol = MEMBER_WORKSPACE_ROLES.MEMBER;
+                await newMember.save();
+            } else {
+                newMember = await workspaceMemberRepository.create(user_id, invitation.fk_workspace_id, MEMBER_WORKSPACE_ROLES.MEMBER);
+            }
+
+            // Buscar y agregar al usuario al canal general del workspace
+            try {
+                const channels = await workspaceChannelRepository.getByWorkspaceId(invitation.fk_workspace_id);
+                const generalChannel = channels.find(c => c.name === 'general');
+                if (generalChannel) {
+                    const existingChannelMember = await channelMemberRepository.getByChannelAndWorkspaceMemberId(generalChannel._id, newMember._id);
+                    if (!existingChannelMember) {
+                        await channelMemberRepository.create(generalChannel._id, newMember._id);
+                    }
+                }
+            } catch (err) {
+                console.error("Error al agregar miembro al canal general:", err);
+            }
 
             return {
                 _id: invitation._id,
                 status: INVITATION_STATES.ACCEPTED,
-                message: 'Invitación aceptada'
+                message: 'Invitación aceptada',
+                workspace_id: invitation.fk_workspace_id
             };
         } else {
             // Cambiar estado a rejected
@@ -133,7 +157,8 @@ class InvitationService {
             return {
                 _id: invitation._id,
                 status: INVITATION_STATES.REJECTED,
-                message: 'Invitación rechazada'
+                message: 'Invitación rechazada',
+                workspace_id: invitation.fk_workspace_id
             };
         }
     }

@@ -20,7 +20,7 @@ class WorkspaceMemberRepository {
     }
 
     async getByUserId(user_id) {
-        const result = await WorkspaceMember.find({ fk_user_id: user_id }).populate({
+        const result = await WorkspaceMember.find({ fk_user_id: user_id, active: true }).populate({
             path: 'fk_workspace_id',
             select: 'name description active',
             match: { active: true }
@@ -42,13 +42,15 @@ class WorkspaceMemberRepository {
     async getMembersByWorkspaceId(workspace_id) {
         const result = await WorkspaceMember.find({
             fk_workspace_id: workspace_id,
+            active: true
         }).populate({
             path: 'fk_user_id',
             select: 'user_name email',
             match: { active: true }
         })
-
-        const members_mapped = result.map(
+        // si el usuario esta desactivado no se muestra
+        const activeMembers = result.filter(member => member.fk_user_id);
+        const members_mapped = activeMembers.map(
             (member) => ({
                 member_id: member._id,
                 member_rol: member.rol,

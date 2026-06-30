@@ -23,10 +23,15 @@ class MessageService {
             modification_date
         );
 
+        // Obtener el mensaje creado con referencias pobladas
+        const createdMessage = await channelMessageRepository.findById(message._id);
+
         return {
-            _id: message._id,
-            content: message.content,
-            fk_channel_member_id: channel_member_id
+            message_id: createdMessage._id,
+            channel_id: createdMessage.fk_workspace_channel_id,
+            member_name: createdMessage.fk_channel_member_id.fk_workspace_member_id.fk_user_id.user_name,
+            content: createdMessage.content,
+            updated_at: createdMessage.modification_date
         };
     }
 

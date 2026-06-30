@@ -7,7 +7,7 @@ class MailService {
 
     async sendVerificationEmail(userEmail, verificationToken) {
         try {
-            const verificationUrl = `${ENVIROMENT.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+            const verificationUrl = `${ENVIROMENT.URL_FRONTEND}/verify-email?token=${verificationToken}`;
 
             await mailer_transport.sendMail({
                 from: `"UTN Backend" <${ENVIROMENT.GMAIL_USERNAME}>`,
@@ -23,73 +23,96 @@ class MailService {
                         <style>
                             body {
                                 font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-                                background-color: #0f172a;
+                                background-color: #f4ede8;
                                 margin: 0;
                                 padding: 0;
-                                color: #f1f5f9;
+                                color: #1d1c1d;
+                            }
+                            .wrapper {
+                                background-color: #f4ede8;
+                                padding: 40px 20px;
                             }
                             .container {
-                                max-width: 580px;
-                                margin: 40px auto;
-                                background: #1e293b;
-                                border-radius: 12px;
+                                max-width: 560px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 8px;
                                 overflow: hidden;
-                                border: 1px solid #334155;
-                                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             }
                             .header {
-                                background: linear-gradient(135deg, #6366f1, #3b82f6);
-                                color: #ffffff;
-                                padding: 40px 30px;
+                                background-color: #4a154b;
+                                padding: 32px 30px 28px;
                                 text-align: center;
+                            }
+                            .header-logo {
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: #ffffff;
+                                letter-spacing: 2px;
+                                text-transform: uppercase;
+                                opacity: 0.7;
+                                margin-bottom: 14px;
                             }
                             .header h1 {
                                 margin: 0;
                                 font-size: 26px;
-                                font-weight: 700;
+                                font-weight: 900;
+                                color: #ffffff;
+                                line-height: 1.3;
                             }
                             .content {
-                                padding: 40px 35px;
-                                line-height: 1.7;
+                                padding: 36px 40px 28px;
+                                line-height: 1.65;
+                                color: #1d1c1d;
+                            }
+                            .content p {
+                                margin: 0 0 14px;
+                                font-size: 16px;
                             }
                             .button {
                                 display: inline-block;
-                                padding: 12px 28px;
-                                background: linear-gradient(135deg, #10b981, #059669);
-                                color: #ffffff;
+                                padding: 14px 32px;
                                 text-decoration: none;
-                                border-radius: 6px;
-                                font-weight: 600;
+                                border-radius: 4px;
+                                font-weight: 700;
                                 margin: 20px 0;
                                 font-size: 15px;
+                                background-color: #007a5a;
+                                color: #ffffff;
+                                text-align: center;
+                                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                             }
                             .footer {
-                                background-color: #0f172a;
-                                padding: 25px;
+                                background-color: #f4ede8;
+                                padding: 22px 40px;
                                 text-align: center;
                                 font-size: 12px;
-                                color: #64748b;
-                                border-top: 1px solid #334155;
+                                color: #868686;
+                                border-top: 1px solid #ece8df;
                             }
+                            .footer p { margin: 4px 0; }
                         </style>
                     </head>
                     <body>
-                        <div class="container">
-                            <div class="header">
-                                <h1>Verifica tu Email</h1>
-                            </div>
-                            <div class="content">
-                                <p style="font-size: 16px;">¡Bienvenido!</p>
-                                <p style="font-size: 15px;">Para completar tu registro, necesitas verificar tu dirección de email.</p>
-                                <p style="font-size: 15px;">Haz clic en el botón de abajo para verificar tu email:</p>
-                                <center>
-                                    <a href="${verificationUrl}" class="button">Verificar Email</a>
-                                </center>
-                                <p style="font-size: 13px; color: #94a3b8;">Este enlace expirará en 15 minutos.</p>
-                                <p style="font-size: 13px; color: #94a3b8;">Si no solicitaste este email, ignóralo.</p>
-                            </div>
-                            <div class="footer">
-                                <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                        <div class="wrapper">
+                            <div class="container">
+                                <div class="header">
+                                    <div class="header-logo">UTN Backend</div>
+                                    <h1>✉️ Verifica tu dirección de correo</h1>
+                                </div>
+                                <div class="content">
+                                    <p style="font-size: 16px; margin-top: 0;">¡Bienvenido!</p>
+                                    <p>Para completar tu registro, necesitas verificar tu dirección de correo electrónico.</p>
+                                    <p>Haz clic en el botón de abajo para verificar tu cuenta:</p>
+                                    <div style="text-align:center;">
+                                        <a href="${verificationUrl}" class="button">Verificar Email</a>
+                                    </div>
+                                    <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este enlace de verificación expirará en 15 minutos.</p>
+                                </div>
+                                <div class="footer">
+                                    <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                                </div>
                             </div>
                         </div>
                     </body>
@@ -119,77 +142,99 @@ class MailService {
                         <style>
                             body {
                                 font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-                                background-color: #0f172a;
+                                background-color: #f4ede8;
                                 margin: 0;
                                 padding: 0;
-                                color: #f1f5f9;
+                                color: #1d1c1d;
+                            }
+                            .wrapper {
+                                background-color: #f4ede8;
+                                padding: 40px 20px;
                             }
                             .container {
-                                max-width: 580px;
-                                margin: 40px auto;
-                                background: #1e293b;
-                                border-radius: 12px;
+                                max-width: 560px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 8px;
                                 overflow: hidden;
-                                border: 1px solid #334155;
-                                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             }
                             .header {
-                                background: linear-gradient(135deg, #f59e0b, #f97316);
-                                color: #ffffff;
-                                padding: 40px 30px;
+                                background-color: #4a154b;
+                                padding: 32px 30px 28px;
                                 text-align: center;
+                            }
+                            .header-logo {
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: #ffffff;
+                                letter-spacing: 2px;
+                                text-transform: uppercase;
+                                opacity: 0.7;
+                                margin-bottom: 14px;
                             }
                             .header h1 {
                                 margin: 0;
                                 font-size: 26px;
-                                font-weight: 700;
+                                font-weight: 900;
+                                color: #ffffff;
+                                line-height: 1.3;
                             }
                             .content {
-                                padding: 40px 35px;
-                                line-height: 1.7;
+                                padding: 36px 40px 28px;
+                                line-height: 1.65;
+                                color: #1d1c1d;
+                            }
+                            .content p {
+                                margin: 0 0 14px;
+                                font-size: 16px;
                             }
                             .code-box {
-                                background: #0f172a;
-                                border: 2px solid #f59e0b;
+                                background: #f8f5ff;
+                                border: 1px solid #e8dff5;
+                                border-left: 4px solid #4a154b;
                                 padding: 20px;
-                                border-radius: 8px;
+                                border-radius: 6px;
                                 text-align: center;
                                 margin: 25px 0;
                             }
                             .code {
                                 font-size: 32px;
-                                font-weight: 700;
-                                color: #f59e0b;
+                                font-weight: 800;
+                                color: #4a154b;
                                 letter-spacing: 4px;
                                 font-family: 'Courier New', monospace;
                             }
                             .footer {
-                                background-color: #0f172a;
-                                padding: 25px;
+                                background-color: #f4ede8;
+                                padding: 22px 40px;
                                 text-align: center;
                                 font-size: 12px;
-                                color: #64748b;
-                                border-top: 1px solid #334155;
+                                color: #868686;
+                                border-top: 1px solid #ece8df;
                             }
+                            .footer p { margin: 4px 0; }
                         </style>
                     </head>
                     <body>
-                        <div class="container">
-                            <div class="header">
-                                <h1>Código de Autenticación</h1>
-                            </div>
-                            <div class="content">
-                                <p style="font-size: 16px;">¡Hola!</p>
-                                <p style="font-size: 15px;">Tu código de verificación de dos factores es:</p>
-                                <div class="code-box">
-                                    <div class="code">${code2FA}</div>
+                        <div class="wrapper">
+                            <div class="container">
+                                <div class="header">
+                                    <div class="header-logo">UTN Backend</div>
+                                    <h1>🔑 Código de Autenticación</h1>
                                 </div>
-                                <p style="font-size: 15px;">Ingresa este código en la aplicación para completar tu acceso.</p>
-                                <p style="font-size: 13px; color: #94a3b8;">Este código expirará en 15 minutos.</p>
-                                <p style="font-size: 13px; color: #94a3b8;">Si no solicitaste este código, por favor cambia tu contraseña inmediatamente.</p>
-                            </div>
-                            <div class="footer">
-                                <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                                <div class="content">
+                                    <p style="font-size: 16px; margin-top: 0;">¡Hola!</p>
+                                    <p>Tu código de verificación de dos factores (2FA) es:</p>
+                                    <div class="code-box">
+                                        <div class="code">${code2FA}</div>
+                                    </div>
+                                    <p>Ingresa este código en la aplicación para completar tu acceso de inicio de sesión.</p>
+                                    <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este código expirará en 15 minutos.</p>
+                                </div>
+                                <div class="footer">
+                                    <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                                </div>
                             </div>
                         </div>
                     </body>
@@ -205,7 +250,7 @@ class MailService {
 
     async sendPasswordResetEmail(userEmail, resetToken) {
         try {
-            const resetUrl = `${ENVIROMENT.FRONTEND_URL}/reset-password?token=${resetToken}`;
+            const resetUrl = `${ENVIROMENT.URL_FRONTEND}/reset-password?token=${resetToken}`;
 
             await mailer_transport.sendMail({
                 from: `"UTN Backend" <${ENVIROMENT.GMAIL_USERNAME}>`,
@@ -221,73 +266,96 @@ class MailService {
                         <style>
                             body {
                                 font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
-                                background-color: #0f172a;
+                                background-color: #f4ede8;
                                 margin: 0;
                                 padding: 0;
-                                color: #f1f5f9;
+                                color: #1d1c1d;
+                            }
+                            .wrapper {
+                                background-color: #f4ede8;
+                                padding: 40px 20px;
                             }
                             .container {
-                                max-width: 580px;
-                                margin: 40px auto;
-                                background: #1e293b;
-                                border-radius: 12px;
+                                max-width: 560px;
+                                margin: 0 auto;
+                                background: #ffffff;
+                                border-radius: 8px;
                                 overflow: hidden;
-                                border: 1px solid #334155;
-                                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                             }
                             .header {
-                                background: linear-gradient(135deg, #ef4444, #dc2626);
-                                color: #ffffff;
-                                padding: 40px 30px;
+                                background-color: #4a154b;
+                                padding: 32px 30px 28px;
                                 text-align: center;
+                            }
+                            .header-logo {
+                                font-size: 12px;
+                                font-weight: 700;
+                                color: #ffffff;
+                                letter-spacing: 2px;
+                                text-transform: uppercase;
+                                opacity: 0.7;
+                                margin-bottom: 14px;
                             }
                             .header h1 {
                                 margin: 0;
                                 font-size: 26px;
-                                font-weight: 700;
+                                font-weight: 900;
+                                color: #ffffff;
+                                line-height: 1.3;
                             }
                             .content {
-                                padding: 40px 35px;
-                                line-height: 1.7;
+                                padding: 36px 40px 28px;
+                                line-height: 1.65;
+                                color: #1d1c1d;
+                            }
+                            .content p {
+                                margin: 0 0 14px;
+                                font-size: 16px;
                             }
                             .button {
                                 display: inline-block;
-                                padding: 12px 28px;
-                                background: linear-gradient(135deg, #10b981, #059669);
-                                color: #ffffff;
+                                padding: 14px 32px;
                                 text-decoration: none;
-                                border-radius: 6px;
-                                font-weight: 600;
+                                border-radius: 4px;
+                                font-weight: 700;
                                 margin: 20px 0;
                                 font-size: 15px;
+                                background-color: #007a5a;
+                                color: #ffffff;
+                                text-align: center;
+                                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                             }
                             .footer {
-                                background-color: #0f172a;
-                                padding: 25px;
+                                background-color: #f4ede8;
+                                padding: 22px 40px;
                                 text-align: center;
                                 font-size: 12px;
-                                color: #64748b;
-                                border-top: 1px solid #334155;
+                                color: #868686;
+                                border-top: 1px solid #ece8df;
                             }
+                            .footer p { margin: 4px 0; }
                         </style>
                     </head>
                     <body>
-                        <div class="container">
-                            <div class="header">
-                                <h1>Recuperar Contraseña</h1>
-                            </div>
-                            <div class="content">
-                                <p style="font-size: 16px;">¡Hola!</p>
-                                <p style="font-size: 15px;">Recibimos una solicitud para recuperar tu contraseña.</p>
-                                <p style="font-size: 15px;">Haz clic en el botón de abajo para establecer una nueva contraseña:</p>
-                                <center>
-                                    <a href="${resetUrl}" class="button">Recuperar Contraseña</a>
-                                </center>
-                                <p style="font-size: 13px; color: #94a3b8;">Este enlace expirará en 5 minutos.</p>
-                                <p style="font-size: 13px; color: #94a3b8;">Si no solicitaste recuperar tu contraseña, ignora este email.</p>
-                            </div>
-                            <div class="footer">
-                                <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                        <div class="wrapper">
+                            <div class="container">
+                                <div class="header">
+                                    <div class="header-logo">UTN Backend</div>
+                                    <h1>🔒 Recuperar Contraseña</h1>
+                                </div>
+                                <div class="content">
+                                    <p style="font-size: 16px; margin-top: 0;">¡Hola!</p>
+                                    <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+                                    <p>Haz clic en el botón de abajo para establecer una nueva contraseña:</p>
+                                    <div style="text-align:center;">
+                                        <a href="${resetUrl}" class="button">Recuperar Contraseña</a>
+                                    </div>
+                                    <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este enlace de recuperación expirará en 5 minutos.</p>
+                                </div>
+                                <div class="footer">
+                                    <p>&copy; 2026 UTN Backend. Todos los derechos reservados.</p>
+                                </div>
                             </div>
                         </div>
                     </body>

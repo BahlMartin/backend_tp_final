@@ -20,7 +20,8 @@ const channelController = {
     async getChannels(req, res, next) {
         try {
             const { workspace_id } = req.params;
-            const result = await channelService.getChannelsByWorkspace(workspace_id);
+            const user_id = req.user.user_id;
+            const result = await channelService.getChannelsByWorkspace(workspace_id, user_id, req.workspaceMembership);
 
             return res.status(200).json({
                 ok: true,

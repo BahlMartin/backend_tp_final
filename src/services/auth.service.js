@@ -162,7 +162,7 @@ class AuthService {
         // Validación de negocio: contraseña correcta
         const valid_password = await bcrypt.compare(password, user.password);
         if (!valid_password) {
-            throw new ServerError('Email o contraseña incorrectos', 401);
+            throw new ServerError('contraseña incorrecta', 401);
         }
 
         // Validación de negocio: email verificado

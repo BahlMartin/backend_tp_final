@@ -63,16 +63,14 @@ function channelMembershipMiddleware(options = {}) {
                 const is_owner = workspace_membership && workspace_membership.rol === MEMBER_WORKSPACE_ROLES.OWNER;
                 const should_bypass = allow_owner_bypass && is_owner;
 
-                if (!should_bypass) {
-                    const members = await channelMemberRepository.getMembersByChannelId(channel_id);
-                    const matched_member = members.find(member => member.workspace_member_id && member.workspace_member_id.toString() === workspace_membership._id.toString());
+                const members = await channelMemberRepository.getMembersByChannelId(channel_id);
+                const matched_member = members.find(member => member.workspace_member_id && member.workspace_member_id.toString() === workspace_membership._id.toString());
 
-                    if (!matched_member) {
-                        throw new ServerError('No eres miembro de este canal', 403);
-                    }
-
-                    req.channel_membership = matched_member;
+                if (!matched_member && !should_bypass) {
+                    throw new ServerError('No eres miembro de este canal', 403);
                 }
+
+                req.channel_membership = matched_member;
             }
 
             req.channel = channel
