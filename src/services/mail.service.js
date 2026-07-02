@@ -28,6 +28,10 @@ class MailService {
                                 padding: 0;
                                 color: #1d1c1d;
                             }
+                            a {
+                                text-decoration: none;
+                                color: inherit;
+                            }
                             .wrapper {
                                 background-color: #f4ede8;
                                 padding: 40px 20px;
@@ -79,7 +83,7 @@ class MailService {
                                 margin: 20px 0;
                                 font-size: 15px;
                                 background-color: #007a5a;
-                                color: #ffffff;
+                                color: #000000;
                                 text-align: center;
                                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                             }
@@ -118,7 +122,7 @@ class MailService {
                                     <p>Para completar tu registro, necesitas verificar tu dirección de correo electrónico.</p>
                                     <p>Haz clic en el botón de abajo para verificar tu cuenta:</p>
                                     <div style="text-align:center;">
-                                        <a href="${verificationUrl}" class="button">Verificar Email</a>
+                                        <a href="${verificationUrl}" class="button" style="color: #000000 !important; text-decoration: none !important;">Verificar Email</a>
                                     </div>
                                     <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este enlace de verificación expirará en 15 minutos.</p>
                                 </div>
@@ -158,6 +162,10 @@ class MailService {
                                 margin: 0;
                                 padding: 0;
                                 color: #1d1c1d;
+                            }
+                            a {
+                                text-decoration: none;
+                                color: inherit;
                             }
                             .wrapper {
                                 background-color: #f4ede8;
@@ -295,6 +303,10 @@ class MailService {
                                 padding: 0;
                                 color: #1d1c1d;
                             }
+                            a {
+                                text-decoration: none;
+                                color: inherit;
+                            }
                             .wrapper {
                                 background-color: #f4ede8;
                                 padding: 40px 20px;
@@ -346,7 +358,7 @@ class MailService {
                                 margin: 20px 0;
                                 font-size: 15px;
                                 background-color: #007a5a;
-                                color: #ffffff;
+                                color: #000000;
                                 text-align: center;
                                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                             }
@@ -385,7 +397,7 @@ class MailService {
                                     <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
                                     <p>Haz clic en el botón de abajo para establecer una nueva contraseña:</p>
                                     <div style="text-align:center;">
-                                        <a href="${resetUrl}" class="button">Recuperar Contraseña</a>
+                                        <a href="${resetUrl}" class="button" style="color: #000000 !important; text-decoration: none !important;">Recuperar Contraseña</a>
                                     </div>
                                     <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este enlace de recuperación expirará en 5 minutos.</p>
                                 </div>
@@ -425,6 +437,10 @@ class MailService {
                                     margin: 0;
                                     padding: 0;
                                     color: #f1f5f9;
+                                }
+                                a {
+                                    text-decoration: none;
+                                    color: inherit;
                                 }
                                 .container {
                                     max-width: 580px;
@@ -487,7 +503,7 @@ class MailService {
                                 }
                                 .button-accept {
                                     background: linear-gradient(135deg, #10b981, #059669);
-                                    color: #ffffff;
+                                    color: #000000;
                                 }
                                 .button-reject {
                                     background-color: #334155;
@@ -534,8 +550,8 @@ class MailService {
                                     <p style="font-size: 15px; text-align: center; color: #94a3b8;">¿Deseas aceptar esta invitación?</p>
                                     
                                     <div class="button-group">
-                                        <a href="${accept_url}" class="button button-accept">Aceptar Invitación</a>
-                                        <a href="${reject_url}" class="button button-reject">Rechazar</a>
+                                        <a href="${accept_url}" class="button button-accept" style="color: #000000 !important; text-decoration: none !important;">Aceptar Invitación</a>
+                                        <a href="${reject_url}" class="button button-reject" style="color: #e2e8f0 !important; text-decoration: none !important;">Rechazar</a>
                                     </div>
                                 </div>
                                 <div class="footer">
@@ -576,6 +592,10 @@ class MailService {
                                 margin: 0;
                                 padding: 0;
                                 color: #1d1c1d;
+                            }
+                            a {
+                                text-decoration: none;
+                                color: inherit;
                             }
                             .wrapper {
                                 background-color: #f4ede8;
@@ -638,7 +658,7 @@ class MailService {
                             }
                             .button-accept {
                                 background-color: #007a5a;
-                                color: #ffffff;
+                                color: #000000;
                             }
                             .button-reject {
                                 background-color: #ffffff;
@@ -709,8 +729,8 @@ class MailService {
 
                                     <!-- Botones -->
                                     <div style="text-align:center; margin-bottom:20px;">
-                                        <a href="${accept_url}" class="button button-accept">✅ Unirme al workspace</a>
-                                        <a href="${reject_url}" class="button button-reject">No, gracias</a>
+                                        <a href="${accept_url}" class="button button-accept" style="color: #000000 !important; text-decoration: none !important;">✅ Unirme al workspace</a>
+                                        <a href="${reject_url}" class="button button-reject" style="color: #616061 !important; text-decoration: none !important;">No, gracias</a>
                                     </div>
 
                                     <p style="font-size:13px; color:#868686; text-align:center; margin:0;">⏳ Esta invitación expira en <strong>7 días</strong>.</p>
