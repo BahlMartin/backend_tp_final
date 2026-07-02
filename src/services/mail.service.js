@@ -262,7 +262,7 @@ class MailService {
                                         <div class="code">${code2FA}</div>
                                     </div>
                                     <p>Ingresa este código en la aplicación para completar tu acceso de inicio de sesión.</p>
-                                    <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este código expirará en 15 minutos.</p>
+                                    <p style="font-size: 13px; color: #868686; margin-top: 24px; text-align: center;">Este código expirará en 5 minutos.</p>
                                 </div>
                                 <div class="footer">
                                     <p>&copy; 2026 Slucky. Todos los derechos reservados.</p>

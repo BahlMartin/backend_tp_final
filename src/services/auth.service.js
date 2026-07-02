@@ -182,18 +182,18 @@ class AuthService {
         // Generar código 2FA (6 dígitos)
         const code_2fa = String(Math.floor(100000 + Math.random() * 900000));
 
-        // Guardar código 2FA (15 minutos de validez)
+        // Guardar código 2FA (5 minutos de validez)
         const verification_token = jwt.sign(
             { user_id: user._id, code: code_2fa },
             ENVIRONMENT.JWT_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: '5m' }
         );
 
         await verificationTokenRepository.create(
             user._id,
             verification_token,
             TOKEN_TYPES.CODE2FA,
-            new Date(Date.now() + 15 * 60 * 1000)
+            new Date(Date.now() + 5 * 60 * 1000)
         );
 
 
