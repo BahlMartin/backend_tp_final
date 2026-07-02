@@ -184,6 +184,15 @@ Para testear todos los flujos del backend rápidamente, se incluye una colecció
 
 ---
 
-## 🌐 Enlace del Despliegue Público
-- **API Backend Desplegada**: `https://slucky-backend.vercel.app` 
+## 🔮 Futuras Actualizaciones
 
+Con el objetivo de seguir mejorando y escalando la plataforma, se planifican las siguientes actualizaciones para el Backend:
+
+- **Mensajería Instantánea en Tiempo Real (WebSockets)**: Reemplazar el actual mecanismo de consultas periódicas (polling) por conexiones bidireccionales persistentes utilizando **Socket.io** o WebSockets nativos. Esto permitirá la recepción inmediata de mensajes, indicadores de escritura en tiempo real ("escribiendo...") y actualizaciones instantáneas de estado de conexión ("en línea" / "desconectado").
+- **Soporte para Archivos Adjuntos**: Habilitar el envío de imágenes y documentos en los mensajes integrando un servicio de almacenamiento en la nube (ej. AWS S3 o Cloudinary).
+- **Notificaciones Push**: Implementar notificaciones del sistema para avisar al usuario sobre menciones o nuevos mensajes cuando no esté interactuando directamente con la aplicación.
+
+---
+
+## 🌐 Enlace del Despliegue Público
+- **API Backend Desplegada**: `https://slucky-backend.vercel.app`
