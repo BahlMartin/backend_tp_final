@@ -1,0 +1,1225 @@
+{
+  "info": {
+    "_postman_id": "63c818f0-d814-4ceb-be6d-4814d1914d24",
+    "name": "backend_slack",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46397297"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "check-email",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/check-email?email=abc@gmail.com",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "check-email"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "abc@gmail.com"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"password\": \"M123456m\",\r\n    \"first_name\":\"pepito\",\r\n    \"last_name\":\"gomez\",\r\n    \"user_name\":\"elPEPE\"\r\n\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/register",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-email",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/verify-email?token=",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-email"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"password\":\"M123456m\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/login",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-2fa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// guardar token en una variable de coleccion\r",
+                  "pm.collectionVariables.set(\"auth_token\", response.data.access_token);\r",
+                  "\r",
+                  "// opcional: mostrar por consola\r",
+                  "console.log(\"Token guardado:\", response.data.access_token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"code\": 458291\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/verify-2fa",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "verify-2fa"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/forgot-password",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"password\": \"A123456a\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/auth/reset-password?token=",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "workspace",
+      "item": [
+        {
+          "name": "create-workspace",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "\r",
+                  "// guardar token en una variable de coleccion\r",
+                  "pm.collectionVariables.set(\"workspace_id\", response.data._id);\r",
+                  "\r",
+                  "// opcional: mostrar por consola\r",
+                  "console.log(\"workspace_id:\", response.data._id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"elespacioloco\",\r\n    \"description\":\"juan\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-workspaces",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-workspace-id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-workspace",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"prueba\",\r\n    \"description\": \"prueba\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-workspace",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "invitacion-workspace",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abc@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/invitations",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "invitations"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-miembros",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/members",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "members"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "actualizar-rol",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"rol\":\"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/members/:members_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "members",
+                ":members_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                },
+                {
+                  "key": "members_id",
+                  "value": "6a41f5e8c25abd2285ecfac8"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "eliminar-miembro",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/members/:members_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "members",
+                ":members_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                },
+                {
+                  "key": "members_id",
+                  "value": "6a3d9e39a5efb7d061d37622"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "creacion-de-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"tuCanal de testeo\",\r\n    \"description\":\"testeo \"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/channels",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "channels"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-canales-workspace",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/channels",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "channels"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "eliminar-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/workspaces/:workspace_id/channels/:channel_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "workspaces",
+                ":workspace_id",
+                "channels",
+                ":channel_id"
+              ],
+              "variable": [
+                {
+                  "key": "workspace_id",
+                  "value": "{{workspace_id}}"
+                },
+                {
+                  "key": "channel_id",
+                  "value": "6a41f3834a09ceb7d0c6f95d"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "obtener-mis-datos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/users/me",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "actualizar-mis-datos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"first_name\":\"pepe\",\r\n    \"last_name\":\"gonzales\",\r\n    \"user_name\":\"ElGranPEPE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/users/me",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "invitation",
+      "item": [
+        {
+          "name": "aceptar/rechazar-invitacion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/invitations/:invitation_id/:decision",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "invitations",
+                ":invitation_id",
+                ":decision"
+              ],
+              "variable": [
+                {
+                  "key": "invitation_id",
+                  "value": "6a41f4f84a09ceb7d0c6f961"
+                },
+                {
+                  "key": "decision",
+                  "value": "accepted"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "channels",
+      "item": [
+        {
+          "name": "obtener-datos-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a41f13be10da62467cf6de5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-mensajes de canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id/messages",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id",
+                "messages"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a41f13be10da62467cf6de5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "creacion-de-mensaje",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"hola este es el segundo mensaje de prueba\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id/messages",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id",
+                "messages"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a41f13be10da62467cf6de5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "modificacion-de-mensaje",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"content\": \"hola este es el primer mensaje de edicion\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/messages/:message_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                "messages",
+                ":message_id"
+              ],
+              "variable": [
+                {
+                  "key": "message_id",
+                  "value": "6a41f7165ed64577ffbc7237"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "eliminar-mensaje",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/messages/:message_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                "messages",
+                ":message_id"
+              ],
+              "variable": [
+                {
+                  "key": "message_id",
+                  "value": "6a41f7165ed64577ffbc7237"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "anadir-miembro-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"member_id\": \"6a41f5e8c25abd2285ecfac8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id/members",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id",
+                "members"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a41f13be10da62467cf6de5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "obtener-miembros-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id/members",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id",
+                "members"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a41f13be10da62467cf6de5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "eliminar-miembro-canal",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{api_slack_url}}/api/channels/:channel_id/members/:member_id",
+              "host": [
+                "{{api_slack_url}}"
+              ],
+              "path": [
+                "api",
+                "channels",
+                ":channel_id",
+                "members",
+                ":member_id"
+              ],
+              "variable": [
+                {
+                  "key": "channel_id",
+                  "value": "6a40e396aba4b967b94fed7f"
+                },
+                {
+                  "key": "member_id",
+                  "value": "6a41925f1c921ce8fb4f4747"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_token",
+      "value": ""
+    },
+    {
+      "key": "workspace_id",
+      "value": ""
+    }
+  ]
+}
