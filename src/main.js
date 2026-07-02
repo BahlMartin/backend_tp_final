@@ -40,3 +40,5 @@ app.use('/api/channels', channel_router);
 
 // Middleware global de manejo de errores (debe ser el último)
 app.use(errorHandlerMiddleware)
+
+export default app;
