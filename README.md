@@ -94,7 +94,7 @@ Crea un archivo `.env` en la raíz de la carpeta `BACKEND` con las siguientes va
 ```env
 PORT=8080
 MONGO_DB_CONNECTION_STRING=tu_string_de_conexion_mongodb_atlas
-MONGO_DB_NAME=tp-final-utn
+MONGO_DB_NAME=base-datos
 MODE=development
 JWT_SECRET=clave_secreta_super_segura
 URL_FRONTEND=http://localhost:5173
